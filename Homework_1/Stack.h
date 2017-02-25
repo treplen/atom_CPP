@@ -21,7 +21,7 @@
 #define ASSERT_OK()                 \
     if(!ok())                       \
     {                               \
-        dump();                     \
+        dump(std::cerr);            \
         assert(!"Object is OK");    \
     }
 #endif
@@ -104,7 +104,7 @@ public:
 //! Dumper
 //---------------------------------------
 
-    void dump() const;
+    void dump(std::ostream& out) const;
 };
 //---------------------------------------
 template <typename T>
@@ -210,9 +210,9 @@ bool Stack<T>::ok() const
 }
 //---------------------------------------
 template <typename T>
-void Stack<T>::dump() const
+void Stack<T>::dump(std::ostream& out) const
 {
-    std::cout<<"Stack("<<(ok()?("ok"):("ERROR"))<<")\n\t{\n\tsize_\t = "<<size_<<"\n\tcapacity_\t = "<<capacity_<<
+    out<<"Stack("<<(ok()?("ok"):("ERROR"))<<")\n\t{\n\tsize_\t\t = "<<size_<<"\n\tcapacity_\t = "<<capacity_<<
              "\n\tarray_ ["<<capacity_<<"]\n\t}\n";
 }
 
