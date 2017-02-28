@@ -18,10 +18,10 @@
 //---------------------------------------
 
 #ifndef ASSERT_OK
-#define ASSERT_OK()                 \
-    if(!ok())                       \
+#define ASSERT_OK(elem)                 \
+    if(!elem->ok())                       \
     {                               \
-        dump(std::cerr);            \
+        elem->dump(std::cerr);            \
         assert(!"Object is OK");    \
     }
 #endif
@@ -128,6 +128,7 @@ Stack<T>::Stack(size_t capacity): capacity_(capacity), size_(0)
 template <typename T>
 Stack<T>::Stack(Stack<T>& stack): capacity_(stack.capacity_), size_(stack.size_)
 {
+    ASSERT_OK((&stack));
     if(stack.array_== nullptr)
         array_= nullptr;
     else
@@ -136,6 +137,7 @@ Stack<T>::Stack(Stack<T>& stack): capacity_(stack.capacity_), size_(stack.size_)
         for(int i=0;i<size_;i++)
             array_[i]=stack.array_[i];
     }
+    ASSERT_OK(this);
 }
 //---------------------------------------
 template <typename T>
@@ -148,7 +150,7 @@ Stack<T>::~Stack()
 template <typename T>
 T Stack<T>::top() const
 {
-    ASSERT_OK();
+    ASSERT_OK(this);
     if(size_==0)
         throw std::out_of_range("Stack is empty");
     return array_[size_-1];
@@ -157,49 +159,49 @@ T Stack<T>::top() const
 template <typename T>
 bool Stack<T>::empty() const
 {
-    ASSERT_OK();
+    ASSERT_OK(this);
     return size_==0;
 }
 //---------------------------------------
 template <typename T>
 bool Stack<T>::full() const
 {
-    ASSERT_OK();
+    ASSERT_OK(this);
     return size_==capacity_;
 }
 //---------------------------------------
 template <typename T>
 size_t Stack<T>::size() const
 {
-    ASSERT_OK();
+    ASSERT_OK(this);
     return size_;
 }
 //---------------------------------------
 template <typename T>
 size_t Stack<T>::capacity() const
 {
-    ASSERT_OK();
+    ASSERT_OK(this);
     return capacity_;
 }
 //---------------------------------------
 template <typename T>
 void Stack<T>::push(T value)
 {
-    ASSERT_OK();
+    ASSERT_OK(this);
     if(size_==capacity_)
         throw std::out_of_range("Stack is full");
     array_[size_++]=value;
-    ASSERT_OK();
+    ASSERT_OK(this);
 }
 //---------------------------------------
 template <typename T>
 T Stack<T>::pop()
 {
-    ASSERT_OK();
+    ASSERT_OK(this);
     if(size_==0)
         throw std::out_of_range("Stack is empty");
     T value = array_[--size_];
-    ASSERT_OK()
+    ASSERT_OK(this)
     return value;
 }
 //---------------------------------------
