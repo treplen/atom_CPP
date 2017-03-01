@@ -151,7 +151,7 @@ Stack<T>::Stack(Stack<T>& stack): capacity_(stack.capacity_), size_(stack.size_)
 template <typename T>
 Stack<T>::~Stack()
 {
-    delete array_;
+    delete[] array_;
     array_= nullptr;
 }
 //---------------------------------------
