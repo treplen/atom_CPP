@@ -19,9 +19,9 @@
 
 #ifndef ASSERT_OK
 #define ASSERT_OK(elem)                 \
-    if(!elem->ok())                       \
+    if(!(elem)->ok())                       \
     {                               \
-        elem->dump(std::cerr);            \
+        (elem)->dump(std::cerr);            \
         assert(!"Object is OK");    \
     }
 #endif
@@ -128,14 +128,22 @@ Stack<T>::Stack(size_t capacity): capacity_(capacity), size_(0)
 template <typename T>
 Stack<T>::Stack(Stack<T>& stack): capacity_(stack.capacity_), size_(stack.size_)
 {
-    ASSERT_OK((&stack));
+    ASSERT_OK(&stack);
     if(stack.array_== nullptr)
         array_= nullptr;
     else
     {
-        array_=new T[capacity_];
-        for(int i=0;i<size_;i++)
-            array_[i]=stack.array_[i];
+        try
+        {
+            array_=new T[stack.capacity_];
+        }
+        catch (std::bad_alloc)
+        {
+            array_= nullptr;
+        }
+        if(array_!= nullptr)
+            for(int i=0;i<size_;i++)
+                array_[i]=stack.array_[i];
     }
     ASSERT_OK(this);
 }
