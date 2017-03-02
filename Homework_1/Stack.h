@@ -8,22 +8,28 @@
 #ifndef MYSTACK_STACK_H
 #define MYSTACK_STACK_H
 
+#define LOG
+
 #include <cstdlib>
 #include <stdexcept>
 #include <iostream>
 #include <cassert>
 
 //---------------------------------------
-//! Macr oto test object integrity
+//! Macro to test object integrity
 //---------------------------------------
 
 #ifndef ASSERT_OK
-#define ASSERT_OK(elem)                 \
-    if(!(elem)->ok())                       \
+#ifdef LOG
+#define ASSERT_OK(elem)             \
+    if(!(elem)->ok())               \
     {                               \
-        (elem)->dump(std::cerr);            \
+        (elem)->dump(std::cerr);         \
         assert(!"Object is OK");    \
     }
+#else
+#define ASSERT_OK(elem)
+#endif
 #endif
 
 //---------------------------------------
@@ -141,9 +147,16 @@ Stack<T>::Stack(Stack<T>& stack): capacity_(stack.capacity_), size_(stack.size_)
         {
             array_= nullptr;
         }
-        if(array_!= nullptr)
-            for(int i=0;i<size_;i++)
-                array_[i]=stack.array_[i];
+        if(array_!= nullptr) {
+            try {
+                for (int i = 0; i < size_; i++)
+                    array_[i] = stack.array_[i];
+            }
+            catch (...) {
+                delete[] array_;
+                array_= nullptr;
+            }
+        }
     }
     ASSERT_OK(this);
 }
