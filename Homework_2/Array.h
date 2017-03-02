@@ -33,6 +33,7 @@ class ArrayPointer
 {
 private:
     value_type* data_;
+    size_t capacity_;
     size_t links;
     typedef int value_type;
 public:
@@ -44,6 +45,7 @@ public:
     void link();
     bool dislink();
     bool suicide();
+    size_t capacity() const;
 };
 
 #endif //HOMEWORK_2_ARRAY_H
