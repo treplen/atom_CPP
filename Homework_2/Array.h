@@ -29,12 +29,12 @@ public:
     const Array& operator-=(const int);
 };
 
-class ArrayPointer
+class Array::ArrayPointer
 {
 private:
     value_type* data_;
     size_t capacity_;
-    size_t links;
+    size_t links_;
     typedef int value_type;
 public:
     explicit ArrayPointer(size_t capacity);
