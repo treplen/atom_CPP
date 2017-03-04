@@ -4,48 +4,59 @@
 
 #ifndef HOMEWORK_2_ARRAY_H
 #define HOMEWORK_2_ARRAY_H
+#include <cstdint>
 
 class Array
 {
 private:
-    class ArrayPointer;
-    size_t current_;
-    ArrayPointer* pointer_;
+	class ArrayPointer;
+	size_t current_;
+	ArrayPointer* pointer_;
 public:
-    explicit Array(size_t capacity);
-    Array(const Array&);
-    ~Array();
-    ArrayPointer::value_type& operator[](size_t position);
-    ArrayPointer::value_type& operator*();
-    const Array& operator=(const Array&);//Р’РѕР·РјРѕР¶РЅРѕ Р±РµР· '&', РЅР°РґРѕ СЃРјРѕС‚СЂРµС‚СЊ
-    const Array clone();
-    Array operator+(const int);
-    Array operator-(const int);
-    Array& operator++();      //РџСЂРµС„РёРєСЃРЅС‹Р№
-    Array operator++(int);   //РџРѕСЃС‚С„РёРєСЃРЅС‹Р№
-    Array& operator--();
-    Array operator--(int);
-    const Array& operator+=(const int);
-    const Array& operator-=(const int);
+	typedef int value_type;
+	explicit Array(size_t capacity);
+	Array(const Array&);
+	~Array();
+	value_type& operator[](size_t position) const;
+	value_type& At(size_t position) const; 
+	value_type& operator*() const;
+	const Array& operator=(const Array&);//Возможно без '&', надо смотреть
+	Array clone() const;
+	Array operator+(const int);
+	Array operator-(const int);
+	Array& operator++();      //Префиксный
+	Array operator++(int);   //Постфиксный
+	Array& operator--();
+	Array operator--(int);
+	const Array& operator+=(const int);
+	const Array& operator-=(const int);
+	bool ok() const;
 };
+
+
+
 
 class Array::ArrayPointer
 {
 private:
-    value_type* data_;
-    size_t capacity_;
-    size_t links_;
-    typedef int value_type;
+	value_type * data_;
+	size_t capacity_;
+	size_t links_;
+
+	void link();
+	void dislink();
+	void suicide();
 public:
-    explicit ArrayPointer(size_t capacity);
-    ArrayPointer(const ArrayPointer&)= delete;
-    ~ArrayPointer();
-    value_type& operator[](const size_t) const;
-    ArrayPointer clone() const;
-    void link();
-    bool dislink();
-    bool suicide();
-    size_t capacity() const;
+	bool ok() const;
+	const uint32_t POISON = UINT32_MAX;
+	explicit ArrayPointer(size_t capacity);
+	ArrayPointer(const ArrayPointer&);
+	~ArrayPointer();
+	value_type& operator[](const size_t) const; //unsafe
+	value_type& At(const size_t) const; //safe
+	ArrayPointer clone() const;
+	size_t capacity() const;
+
 };
 
 #endif //HOMEWORK_2_ARRAY_H
