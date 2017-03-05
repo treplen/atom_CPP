@@ -9,6 +9,7 @@
 #include <cstring>
 #include <iostream>
 #include <iomanip>
+#include <cmath>
 
 #define POISON 0xDADADADA
 
@@ -107,17 +108,10 @@ private:
 
     size_t end_;
 
-//---------------------------------------
-//! @brief capacity of the array's storage
-//---------------------------------------
-
-    size_t size_;
-
 public:
 
 //---------------------------------------
 //! @brief array's constructor
-//! @note fills the storage with poison
 //---------------------------------------
 
     Array();
@@ -167,7 +161,7 @@ public:
 //! @return a pointer to the array storage
 //---------------------------------------
 
-    T* data() const ;
+    T* data();
 
 //---------------------------------------
 //! @brief Checks if the array is empty
@@ -231,13 +225,11 @@ public:
 };
 
 template<class T, size_t size>
-Array<T,size>::Array():begin_(size-1),end_(0),size_(size) {
-    std::memset(data_,POISON,sizeof(T)*size_);
-}
+Array<T,size>::Array():begin_(size-1),end_(0) {}
 
 template<class T, size_t size>
 Array<T,size>::~Array() {
-    std::memset(data_,POISON,sizeof(T)*size_);
+    std::memset(data_,POISON,sizeof(T)*size);
     begin_=POISON;
     end_=POISON;
 }
@@ -245,26 +237,31 @@ Array<T,size>::~Array() {
 template<class T, size_t size>
 T& Array<T,size>::at(size_t position)
 {
-    if(position<0||position>=size_)
+    ASSERT_OK(this);
+    if(position<0||position>=size)
         throw std::out_of_range("Position is out of array bounds");
     if(end_<position)
         end_=position;
     if(begin_>position)
         begin_=position;
+    ASSERT_OK(this);
     return data_[position];
 }
 
 template<class T, size_t size>
 T& Array<T,size>::operator[](size_t position) {
+    ASSERT_OK(this);
     if(end_<position)
         end_=position;
     if(begin_>position)
         begin_=position;
+    ASSERT_OK(this);
     return data_[position];
 }
 
 template<class T, size_t size>
 T &Array<T,size>::front() {
+    ASSERT_OK(this);
     if(begin_>end_)
         throw std::out_of_range("Array is empty");
     return data_[begin_];
@@ -272,98 +269,113 @@ T &Array<T,size>::front() {
 
 template<class T, size_t size>
 T &Array<T,size>::back() {
+    ASSERT_OK(this);
     if(begin_>end_)
         throw std::out_of_range("Array is empty");
     return data_[end_];
 }
 
 template<class T, size_t size>
-T* Array<T,size>::data() const {
+T* Array<T,size>::data() {
+    ASSERT_OK(this);
     return data_;
 }
 
 template<class T, size_t size>
 bool Array<T,size>::empty() const {
-    return end_>begin_;
+    ASSERT_OK(this);
+    return end_<begin_;
 }
 
 template<class T, size_t size>
 size_t Array<T,size>::current_size() const {
+    ASSERT_OK(this);
     return begin_>end_?0:end_-begin_+1;
 };
 
 template<class T, size_t size>
 size_t Array<T,size>::max_size() const {
-    return size_;
+    ASSERT_OK(this);
+    return size;
 }
 
 template<class T, size_t size>
 void Array<T,size>::fill(const T &value) {
+    ASSERT_OK(this);
     begin_=0;
-    end_=size_-1;
-    for(int i = 0;i<size_;i++)
+    end_=size-1;
+    for(int i = 0;i<size;i++)
         data_[i]=value;
+    ASSERT_OK(this);
 };
 
 template<class T, size_t size>
 void Array<T,size>::swap(Array<T,size>& that) {
+    ASSERT_OK(this);
+    ASSERT_OK(&that);
     Array buffer = *this;
     *this=that;
     that=buffer;
+    ASSERT_OK(this);
+    ASSERT_OK(&that);
 }
 
 template<class T, size_t size>
 bool operator==(const Array<T,size>& array1, const Array<T,size>& array2){
-    return memcmp(array1,array2,sizeof(Array<T,size>))==0;
+    if(array1.begin_!=array2.begin_||array1.end_!=array2.end_)
+        return false;
+    return memcmp(array1.data_+array1.begin_,array2.data_+array2.begin_,sizeof(T)*array1.current_size())==0;
 }
 
 template<class T, size_t size>
 bool operator!=(const Array<T,size>& array1, const Array<T,size>& array2){
-    return !memcmp(array1,array2,sizeof(Array<T,size>))==0;
+    if(array1.begin_!=array2.begin_||array1.end_!=array2.end_)
+        return true;
+    return !memcmp(array1.data_,array2.data_,sizeof(T)*size)==0;
 }
 
 template<class T, size_t size>
 bool operator<(const Array<T,size>& array1, const Array<T,size>& array2) {
-    return memcmp(array1,array2,sizeof(Array<T,size>))<0;
+    return memcmp(array1.data_,array2.data_,sizeof(T)*size)<0;
 }
 
 template<class T, size_t size>
 bool operator<=(const Array<T,size>& array1, const Array<T,size>& array2){
-    return memcmp(array1,array2,sizeof(Array<T,size>))<=0;
+    return memcmp(array1.data_,array2.data_,sizeof(T)*size)<=0;
 }
 
 template<class T, size_t size>
 bool operator>(const Array<T,size>& array1, const Array<T,size>& array2){
-    return memcmp(array1,array2,sizeof(Array<T,size>))>0;
+    return memcmp(array1.data_,array2.data_,sizeof(T)*size)>0;
 }
 
 template<class T, size_t size>
 bool operator>=(const Array<T,size>& array1, const Array<T,size>& array2){
-    return memcmp(array1,array2,sizeof(Array<T,size>))>=0;
+    return memcmp(array1.data_,array2.data_,sizeof(T)*size)>=0;
 }
 
 template<class T, size_t size>
 bool Array<T,size>::ok() const {
-    return !(end_<begin_&&(end_!=0||begin_!=size_-1)||begin_>=size_||end_>=size_);
+    return !(end_<begin_&&(end_!=0||begin_!=size-1)||begin_>=size||end_>=size);
 }
 
 template<class T, size_t size>
 void Array<T,size>::dump(std::ostream& out) const {
     out<<"Array("<<(ok()?"OK":"ERROR")<<") ("<<this<<"):\n"<<
         "{\n"
-            "\tdata_["<<size_<<"]:\n"<<
+            "\tdata_["<<size<<"]:\n"<<
             "\t{\n";
-    for(int i = 0;i<size_;i++){
+    for(int i = 0;i<size;i++){
         const int*casted = reinterpret_cast<const int*>(&data_[i]);
-        out<<"\t\tdata_["<<i<<"] = ";
-        for(int j = 0;j<sizeof(T)/4;j++)
-            out<<"0x"<<std::setw(sizeof(T)*2)<<std::setfill('0')<<std::hex<<casted[j];
+        out<<"\t\tdata_["<<i<<"] = 0x";
+        for(int j = 0;j<((double)sizeof(T))/4;j++)
+            out<<std::setw(sizeof(T)*2<8?sizeof(T)*2:8)<<std::setfill('0')<<std::hex<<(casted[j]%(int)pow(2,8*sizeof(T)));
         out<<'\n';
     }
         out<<"\t}\n"<<
         "\tbegin_ = "<<begin_<<(begin_==POISON?" (POISON)":"")<<'\n'<<
         "\tend_ = "<<end_<<(end_==POISON?" (POISON)":"")<<'\n'<<
-        "\tsize_ = "<<size_<<(size_==POISON?" (POISON)":"")<<'\n'<<
+        "\tsize_ = "<<size<<(size==POISON?" (POISON)":"")<<'\n'<<
     "}\n";
 
 
