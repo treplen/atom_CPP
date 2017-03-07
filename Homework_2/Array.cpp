@@ -3,17 +3,18 @@
 #include <stdexcept>
 
 
+
 Array::Array(size_t capacity):current_(0), pointer_(new ArrayPointer(capacity))
 {}
 
 Array::Array(const Array& that):current_(0), pointer_(that.pointer_)
 {
-	that.pointer.link();
+	that.pointer_->link();
 }
 
 Array::~Array()
 {
-	if (pointer_.dislink()) delete pointer_;
+	if (pointer_->dislink()) delete pointer_;
 }
 
 Array::value_type& Array::operator[](size_t position) const
@@ -28,15 +29,15 @@ Array::value_type& Array::At(size_t position) const
 
 const Array& Array::operator=(const Array& that)
 {
-	pointer_ = that.pointer_;
-	that.pointer_->link();
+	Array swapper(that);
+	std::swap(*this, swapper);
 	return *this;
 }
 
 Array& Array::clone() const
 {
 	Array * ret = new Array(0);
-	ret->pointer_ = new ArrayPointer(*this.pointer); 
+	ret->pointer_ = new ArrayPointer(*this->pointer_); 
 	return *ret;
 }
 
@@ -45,52 +46,52 @@ bool Array::ok() const
 	return pointer_->ok();
 }
 
-size_t capacity() const
+size_t Array::capacity() const
 {
 	return pointer_->capacity();
 }
 
-value_type& operator*()
+Array::value_type& Array::operator*() const
 {
 	if (current_ < 0) throw std::out_of_range("minus is not allow");
 	return (*pointer_)[current_];
 }
 
-Array& operator+(int value) const
+Array& Array::operator+(int value) const
 {
 	Array *ret = new Array(*this);
 	ret->current_ += value;
 	return *ret;
 }
 
-Array& operator-(int value) const
+Array& Array::operator-(int value) const
 {
 	Array *ret = new Array(*this);
 	ret->current_ -= value;
-	return *this;
+	return *ret;
 }
 
-Array& operator++()
+Array& Array::operator++()
 {
 	current_++;
 	return *this;
 }
 
-Array& operator--()
+Array& Array::operator--()
 {
 	current_--;
 	return *this;
 }
 
-Array& operator+=(int value)
+Array& Array::operator+=(int value)
 {
-	current+=value;
+	current_+=value;
 	return *this;
 }
 
-Array& operator-=(int value)
+Array& Array::operator-=(int value)
 {
-	current-=value;
+	current_-=value;
 	return *this;
 }
 
@@ -112,7 +113,7 @@ Array::ArrayPointer::ArrayPointer(size_t capacity):data_(nullptr), capacity_(cap
 	}
 }
 
-Array::ArrayPointer::ArrayPointer(const ArrayPointer & array_pointer):capacity_(array_pointer.capacity_), links(1)
+Array::ArrayPointer::ArrayPointer(const ArrayPointer & array_pointer):capacity_(array_pointer.capacity_), links_(1)
 {
 	try
 	{

@@ -23,11 +23,11 @@ public:
 	Array& clone() const; //deep copy of object
 	bool ok() const;
 	size_t capacity() const;
-	value_type& operator*();
+	value_type& operator*() const;
 	Array& operator+(int) const;
 	Array& operator-(int) const;
-	Array& operator++(int);
-	Array& operator--(int);
+	Array& operator++();
+	Array& operator--();
 	Array& operator+=(int);
 	Array& operator-=(int);  
 };
