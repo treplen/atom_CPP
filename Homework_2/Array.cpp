@@ -6,12 +6,14 @@
 Array::Array(size_t capacity):current_(0), pointer_(new ArrayPointer(capacity))
 {}
 
-Array::Array(const Array& that):current_(0), pointer_(new ArrayPointer(*that.pointer_))  ///&&&&&&&&&
-{}
+Array::Array(const Array& that):current_(0), pointer_(that.pointer_)
+{
+	that.pointer.link();
+}
 
 Array::~Array()
 {
-	delete pointer_;
+	if (pointer_.dislink()) delete pointer_;
 }
 
 Array::value_type& Array::operator[](size_t position) const
@@ -24,62 +26,77 @@ Array::value_type& Array::At(size_t position) const
 	return pointer_->At(position);
 }
 
-Array::value_type& Array::operator*() const
-{
-	return (*pointer_)[current_];
-}
-
 const Array& Array::operator=(const Array& that)
 {
-	current_ = 0;//&&&&&&&&&
-	pointer_ = new ArrayPointer(*that.pointer_);
+	pointer_ = that.pointer_;
+	that.pointer_->link();
 	return *this;
 }
 
-Array Array::clone() const
+Array& Array::clone() const
 {
 	Array * ret = new Array(0);
-	ret->current_ = current_; //&&&&&&&&&
-	ret->pointer_ = pointer_;
+	ret->pointer_ = new ArrayPointer(*this.pointer); 
 	return *ret;
-}
-
-Array Array::operator+(const int)
-{
-}
-
-Array Array::operator-(const int)
-{
-}
-
-Array& Array::operator++()
-{
-}
-
-Array Array::operator++(int)
-{
-}
-
-Array& Array::operator--()
-{
-}
-
-Array Array::operator--(int)
-{
-}
-
-const Array& Array::operator+=(const int)
-{
-}
-
-const Array& Array::operator-=(const int)
-{
 }
 
 bool Array::ok() const
 {
 	return pointer_->ok();
 }
+
+size_t capacity() const
+{
+	return pointer_->capacity();
+}
+
+value_type& operator*()
+{
+	if (current_ < 0) throw std::out_of_range("minus is not allow");
+	return (*pointer_)[current_];
+}
+
+Array& operator+(int value) const
+{
+	Array *ret = new Array(*this);
+	ret->current_ += value;
+	return *ret;
+}
+
+Array& operator-(int value) const
+{
+	Array *ret = new Array(*this);
+	ret->current_ -= value;
+	return *this;
+}
+
+Array& operator++()
+{
+	current_++;
+	return *this;
+}
+
+Array& operator--()
+{
+	current_--;
+	return *this;
+}
+
+Array& operator+=(int value)
+{
+	current+=value;
+	return *this;
+}
+
+Array& operator-=(int value)
+{
+	current-=value;
+	return *this;
+}
+
+
+
+
 
 Array::ArrayPointer::ArrayPointer(size_t capacity):data_(nullptr), capacity_(capacity), links_(1)
 {
@@ -95,10 +112,8 @@ Array::ArrayPointer::ArrayPointer(size_t capacity):data_(nullptr), capacity_(cap
 	}
 }
 
-Array::ArrayPointer::ArrayPointer(const ArrayPointer & array_pointer)
+Array::ArrayPointer::ArrayPointer(const ArrayPointer & array_pointer):capacity_(array_pointer.capacity_), links(1)
 {
-	capacity_ = array_pointer.capacity_;
-	links_ = 1;
 	try
 	{
 		data_ = new value_type[capacity_];
@@ -114,7 +129,6 @@ Array::ArrayPointer::ArrayPointer(const ArrayPointer & array_pointer)
 
 Array::ArrayPointer::~ArrayPointer()
 {
-	dislink();
 	suicide();
 }
 
@@ -129,15 +143,6 @@ Array::value_type& Array::ArrayPointer::At(const size_t index) const
 	throw std::out_of_range("bad value");
 }
 
-Array::ArrayPointer Array::ArrayPointer::clone() const
-{
-	ArrayPointer * copy = new ArrayPointer(0);
-	copy->links_ = links_;
-	copy->capacity_ = capacity_;
-	copy->data_ = data_;
-	return  *copy;
-}
-
 bool Array::ArrayPointer::ok() const
 {
 	return (links_ != POISON) && (capacity_ != POISON);
@@ -148,9 +153,9 @@ void Array::ArrayPointer::link()
 	links_++;
 }
 
-void Array::ArrayPointer::dislink()
+bool Array::ArrayPointer::dislink()
 {
-	links_--;
+	return !(--links_);
 }
 
 void Array::ArrayPointer::suicide()
