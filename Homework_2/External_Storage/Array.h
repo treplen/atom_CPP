@@ -1,23 +1,28 @@
 //
 // Created by svuatoslav on 3/2/17.
 //
-
 #ifndef HOMEWORK_2_ARRAY_H
 #define HOMEWORK_2_ARRAY_H
 
 #include <cstdint>
 #include <cstring>
 #include <cmath>
-
 #include "ArrayPointer.h"
+#include "Collection.h"
+#include "Iterator.h"
+
 
 template <typename T>
-class Array
+class Array:Collection<T>
 {
 private:
     int current_;
     ArrayPointer<T> * pointer_;
+
 public:
+    Iterator<T>& begin();
+    Iterator<T>& end();
+
     explicit Array(size_t capacity);
     Array(const Array<T>&);
     ~Array();
@@ -143,5 +148,35 @@ Array<T>& Array<T>::operator-=(int value)
     current_-=value;
     return *this;
 }
+
+template <typename T>
+Iterator<T>& Array<T>::begin()
+{
+    Iterator<T> i(this);
+    return i.GetBegin();
+}
+
+template <typename T>
+Iterator<T>& Array<T>::end()
+{
+    Iterator<T> i(this);
+    return i.GetEnd();
+}
+//
+//
+//
+//
+//
+//
+//
+//template <typename T>
+//class Iterator {
+//public:
+//
+//private:
+//
+//
+//
+//};
 
 #endif //HOMEWORK_2_ARRAY_H
