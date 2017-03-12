@@ -201,6 +201,7 @@ void ArrayPointer<bool>::_upd()
 {
     int i = index_ / 8;
     int j = index_ % 8;
+    data_ [i] &= ~access[j];
     if (ret_val_) data_ [i] |=access[j];
 }
 
