@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <iostream>
 #include <iomanip>
+#include "Utils.h"
 
 #define log(x) std::cout<<( x )<<std::endl
 
@@ -48,6 +49,7 @@ ArrayPointer<T>::ArrayPointer(size_t capacity):data_(nullptr), capacity_(capacit
         data_ = nullptr;
         capacity_ = 0;
     }
+    INFO(*this);
 }
 
 template <typename T>
@@ -64,11 +66,13 @@ ArrayPointer<T>::ArrayPointer(const ArrayPointer<T> & array_pointer):capacity_(a
         data_ = nullptr;
         capacity_ = 0;
     }
+    INFO(*this);
 }
 
 template <typename T>
 ArrayPointer<T>::~ArrayPointer()
 {
+    INFO(*this);
     delete[] data_;
     log("free res");
     data_ = nullptr;
@@ -79,12 +83,14 @@ ArrayPointer<T>::~ArrayPointer()
 template <typename T>
 T& ArrayPointer<T>::operator[](const size_t index)
 {
+    INFO(*this);
     return data_[index];
 }
 
 template <typename T>
 T& ArrayPointer<T>::At(const size_t index)
 {
+    INFO(*this);
     if (index<capacity_) return data_[index];
     throw std::out_of_range("bad value");
 }
@@ -98,10 +104,7 @@ bool ArrayPointer<T>::ok() const
 template <typename T>
 void ArrayPointer<T>::dump(std::ostream& out,size_t displacement) const
 {
-    char *tabs;
-    tabs = new char[displacement + 1];
-    for (int i = 0; i < displacement; i++) tabs[i] = '\t';
-    tabs[displacement] = 0;
+    char *tabs = utils::getPadding('\t',displacement);
 
     out<<tabs<<"ArrayPointer("<<(ok()?"OK":"ERROR")<<") @ "<<(void*)this<<'\n';
     out<<tabs<<"{\n";
@@ -127,149 +130,26 @@ void ArrayPointer<T>::dump(std::ostream& out,size_t displacement) const
 template <typename T>
 void ArrayPointer<T>::link()
 {
+    INFO(*this);
     links_++;
     log("add link"+std::to_string(links_));
+    INFO(*this);
 }
 
 template <typename T>
 bool ArrayPointer<T>::dislink()
 {
+    INFO(*this);
     log("rem link"+std::to_string(links_-1));
+    INFO(*this);
     return !(--links_);
 }
 
 template <typename T>
 size_t ArrayPointer<T>::capacity() const
 {
+    INFO(*this);
     return capacity_;
-}
-
-/////////////////////
-////    spec     ////
-/////////////////////
-
-
-
-
-template <>
-class ArrayPointer<bool>
-{
-private:
-    int access[8] = {0b00000001, 0b00000010,0b00000100,0b00001000,0b00010000,0b00100000,0b01000000,0b10000000};
-    char * data_;
-    size_t capacity_;
-    size_t links_;
-    bool helper_; //i'm useless here...
-    bool & ret_val_;
-    int index_;
-    void _upd();
-    inline size_t _capacity();
-public:
-    bool dislink();//same
-    void link();//same
-    bool ok() const;//same
-    void dump(std::ostream& out,size_t displacement = 0) const;//same
-    const uint32_t POISON = UINT32_MAX;
-    explicit ArrayPointer(size_t capacity);
-    ArrayPointer(const ArrayPointer<bool>&);
-    ~ArrayPointer();
-    bool& operator[](const size_t); //unsafe
-    bool& At(const size_t); //safe
-    size_t capacity() const; //same
-};
-
-
-void ArrayPointer<bool>::link()
-{
-    links_++;
-    log("bool add link"+std::to_string(links_));
-}
-
-bool ArrayPointer<bool>::dislink()
-{
-    log("bool rem link"+std::to_string(links_-1));
-    return !(--links_);
-}
-
-size_t ArrayPointer<bool>::capacity() const
-{
-    return capacity_;
-}
-size_t ArrayPointer<bool>::_capacity() {
-    return (int)ceil(1. * capacity_ / 8);
-}
-
-ArrayPointer<bool>::ArrayPointer(size_t capacity): data_(nullptr), capacity_(capacity), links_(1), helper_(false), ret_val_(helper_), index_(0)
-{
-    if (capacity == 0) return;
-    try
-    {
-        data_ = new char[_capacity()];
-    }
-    catch(std::bad_alloc e)
-    {
-        data_ = nullptr;
-        capacity_ = 0;
-    }
-}
-
-ArrayPointer<bool>::ArrayPointer(const ArrayPointer<bool> & array_pointer):capacity_(array_pointer.capacity_), links_(1), helper_(false), ret_val_(helper_), index_(0)
-{
-    try
-    {
-        int cap = _capacity();
-        data_ = new char[cap];
-        for (size_t i = 0; i < cap; i++)
-            data_[i] = array_pointer.data_[i];
-    }
-    catch (std::bad_alloc e)
-    {
-        data_ = nullptr;
-        capacity_ = 0;
-    }
-}
-
-void ArrayPointer<bool>::_upd()
-{
-    int i = index_ / 8;
-    int j = index_ % 8;
-    data_ [i] &= ~access[j];
-    if (ret_val_) data_ [i] |=access[j];
-}
-
-bool& ArrayPointer<bool>::operator[](const size_t index)
-{
-    _upd();
-
-    index_=index;
-    int i = index / 8;
-    int j = index % 8;
-    char c = data_ [i];
-    ret_val_ =(c & access[j]) ? 1:0;
-    return ret_val_;
-}
-
-bool& ArrayPointer<bool>::At(const size_t index)
-{
-    _upd();
-    if (index<capacity_){
-        index_=index;
-        int i = index / 8;
-        int j = index % 8;
-        char c = data_ [i];
-        ret_val_ =(c & access[j]) ? 1 : 0;
-        return ret_val_;
-    }
-    throw std::out_of_range("bad value");
-}
-
-ArrayPointer<bool>::~ArrayPointer()
-{
-    delete[] data_;
-    log("bool free res");
-    data_ = nullptr;
-    capacity_ = POISON;
-    links_ = POISON;
 }
 
 #endif //ARRAY_ARRAYPOINTER_H

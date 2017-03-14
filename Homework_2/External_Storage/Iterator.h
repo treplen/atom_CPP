@@ -14,105 +14,123 @@ private:
     size_t index_;
 public:
     Iterator(Collection<T> *col):c_(col)
-    {}
+    {INFO(*this);}
     Iterator(Collection<T>* col, size_t index):c_(col), index_(index)
-    {}
+    {INFO(*this);}
 
     Iterator<T>& SetBegin()
     {
+        INFO(*this);
         index_ = 0;
+        INFO(*this);
         return *this;
     }
 
     Iterator<T>& SetEnd()
     {
+        INFO(*this);
         index_ = c_->capacity();
+        INFO(*this);
         return *this;
     }
 
     bool operator==(const Iterator<T>& it)const
     {
+        INFO(*this);
         return it.index_ == index_;
     }
 
     bool operator!=(const Iterator<T>& it)const
     {
+        INFO(*this);
         return it.index_ != index_;
     }
 
     bool operator<(const Iterator<T>& it)const
     {
+        INFO(*this);
         return index_ < it.index_;
     }
 
     bool operator>(const Iterator<T>& it)const
     {
+        INFO(*this);
         return index_ > it.index_;
     }
 
 
     bool operator<=(const Iterator<T>& it)const
     {
+        INFO(*this);
         return index_ <= it.index_;
     }
 
     bool operator>=(const Iterator<T>& it)const
     {
+        INFO(*this);
         return index_ >= it.index_;
     }
 
     Iterator<T>& operator++()
     {
+        INFO(*this);
         index_++;
+        INFO(*this);
         return *this;
     }
 
     Iterator<T>& operator--()
     {
+        INFO(*this);
         index_--;
+        INFO(*this);
         return *this;
     }
 
     T& operator*() const
     {
+        INFO(*this);
         return (*c_)[index_];
     }
 
     Iterator<T> operator+(int value) const
     {
+        INFO(*this);
         return Iterator<T>(c_, index_+value);
     }
 
     Iterator<T> operator-(int value) const
     {
+        INFO(*this);
         return Iterator<T>(c_, index_-value);
     }
 
     Iterator<T>& operator+=(int value)
     {
+        INFO(*this);
         index_+=value;
+        INFO(*this);
         return *this;
     }
 
     Iterator<T>& operator-=(int value)
     {
+        INFO(*this);
         index_-=value;
+        INFO(*this);
         return *this;
     }
     bool ok() const
     {
-        return c_!= nullptr && index_ >=0 && index_ < c_->capacity();
+        return c_!= nullptr;
     }
 
     void dump(std::ostream& out,size_t displacement = 0) const
     {
-        char* tabs;
-        tabs = new char[displacement+1];
-        for(int i = 0;i<displacement;i++) tabs[i]='\t';
-        tabs[displacement]=0;
+        char* tabs = utils::getPadding('\t',displacement);
 
         out << tabs << "Iterator(" << (ok() ? "OK" : "ERROR")<<") @ "<<(void*)this<<'\n';
-        out<<tabs<<'{';
+        out<<tabs<<"{\n";
         out<<tabs<<"\tData address: "<<(void*)c_<<'\n';
         out<<tabs<<"\tIndex: "<<index_<<'\n';
         out<<tabs<<"}\n";
