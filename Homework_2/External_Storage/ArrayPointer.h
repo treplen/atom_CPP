@@ -8,6 +8,7 @@
 #include <cstring>
 #include <cstdint>
 #include <iostream>
+#include <iomanip>
 
 #define log(x) std::cout<<( x )<<std::endl
 
@@ -22,6 +23,7 @@ public:
     bool dislink();
     void link();
     bool ok() const;
+    void dump(std::ostream& out,size_t displacement = 0) const;
     const uint32_t POISON = UINT32_MAX;
     explicit ArrayPointer(size_t capacity);
     ArrayPointer(const ArrayPointer<T>&);
@@ -94,6 +96,35 @@ bool ArrayPointer<T>::ok() const
 }
 
 template <typename T>
+void ArrayPointer<T>::dump(std::ostream& out,size_t displacement) const
+{
+    char *tabs;
+    tabs = new char[displacement + 1];
+    for (int i = 0; i < displacement; i++) tabs[i] = '\t';
+    tabs[displacement] = 0;
+
+    out<<tabs<<"ArrayPointer("<<(ok()?"OK":"ERROR")<<") @ "<<(void*)this<<'\n';
+    out<<tabs<<"{\n";
+    out<<tabs<<"\tcapacity: "<<capacity_<<(capacity_==POISON?" (POISON)":"")<<'\n';
+    out<<tabs<<"\tlinks: "<<links_<<(links_==POISON?" (POISON)":"")<<'\n';
+    out<<tabs<<"\tdata @ "<<(void*)data_<<" :\n";
+    out<<tabs<<"\t{\n";
+
+    for(int i = 0;i<capacity_;i++){
+        const int*casted = reinterpret_cast<const int*>(&data_[i]);
+        out<<tabs<<"\t\tdata_["<<i<<"] = 0x";
+        for(int j = 0;j<((double)sizeof(T))/4;j++)
+            out<<std::setw(sizeof(T)*2<8?sizeof(T)*2:8)<<std::setfill('0')<<std::hex<<(casted[j]%(int)pow(2,8*sizeof(T)))<<std::dec;
+        out<<'\n';
+    }
+
+    out<<tabs<<"\t}\n";
+    out<<tabs<<"}\n";
+
+    delete [] tabs;
+}
+
+template <typename T>
 void ArrayPointer<T>::link()
 {
     links_++;
@@ -137,6 +168,7 @@ public:
     bool dislink();//same
     void link();//same
     bool ok() const;//same
+    void dump(std::ostream& out,size_t displacement = 0) const;//same
     const uint32_t POISON = UINT32_MAX;
     explicit ArrayPointer(size_t capacity);
     ArrayPointer(const ArrayPointer<bool>&);

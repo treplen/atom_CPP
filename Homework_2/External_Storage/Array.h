@@ -31,6 +31,7 @@ public:
     const Array<T>& operator=(const Array<T>&);//inc value of pointer
     Array<T>& clone() const; //deep copy of object
     bool ok() const;
+    void dump(std::ostream& out,size_t displacement = 0) const;
     size_t capacity() const;
     T& operator*() const;
     Array<T>& operator+(int) const;
@@ -90,6 +91,24 @@ template <typename T>
 bool Array<T>::ok() const
 {
     return pointer_->ok();
+}
+
+template <typename T>
+void Array<T>::dump(std::ostream& out,size_t displacement) const
+{
+    char *tabs;
+    tabs = new char[displacement + 1];
+    for (int i = 0; i < displacement; i++) tabs[i] = '\t';
+    tabs[displacement] = 0;
+
+    out<<tabs<<"Array("<<(ok()?"OK":"ERROR")<<") @ "<<(void*)this<<'\n';
+    out<<tabs<<"{\n";
+    out<<tabs<<"\tcurrent: "<<current_<<'\n';
+    out<<tabs<<"\tpointer:\n";
+    pointer_->dump(out,displacement+2);
+    out<<tabs<<"}\n";
+
+    delete [] tabs;
 }
 
 template <typename T>

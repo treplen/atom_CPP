@@ -99,6 +99,27 @@ public:
         index_-=value;
         return *this;
     }
+    bool ok() const
+    {
+        return c_!= nullptr && index_ >=0 && index_ < c_->capacity();
+    }
+
+    void dump(std::ostream& out,size_t displacement = 0) const
+    {
+        char* tabs;
+        tabs = new char[displacement+1];
+        for(int i = 0;i<displacement;i++) tabs[i]='\t';
+        tabs[displacement]=0;
+
+        out << tabs << "Iterator(" << (ok() ? "OK" : "ERROR")<<") @ "<<(void*)this<<'\n';
+        out<<tabs<<'{';
+        out<<tabs<<"\tData address: "<<(void*)c_<<'\n';
+        out<<tabs<<"\tIndex: "<<index_<<'\n';
+        out<<tabs<<"}\n";
+
+        delete[] tabs;
+    }
+
 };
 
 
