@@ -1,6 +1,8 @@
-//
-// Created by svuatoslav on 3/2/17.
-//
+//---------------------------------------
+//! @file Array.h
+//! Implementation of the array class
+//---------------------------------------
+
 #ifndef HOMEWORK_2_ARRAY_H
 #define HOMEWORK_2_ARRAY_H
 
@@ -22,26 +24,147 @@ private:
     ArrayPointer<T> * pointer_;
 
 public:
+
+//---------------------------------------
+//! @brief Returns an iterator to the beginning of the array
+//! @return An iterator to the beginning of the array
+//---------------------------------------
+
     Iterator<T> begin();
+
+//---------------------------------------
+//! @brief Returns an iterator to the end of the array
+//! @return An iterator to the end of the array
+//---------------------------------------
+
     Iterator<T> end();
 
+//---------------------------------------
+//! @brief Constructor
+//! @param capacity Maximum amount of elements in the array
+//---------------------------------------
+
     explicit Array(size_t capacity);
-    Array(const Array<T>&);
+
+//---------------------------------------
+//! @brief Copy constructor
+//! @param that Object to copy
+//---------------------------------------
+
+    Array(const Array<T>& that);
+
+//---------------------------------------
+//! @brief Destructor
+//---------------------------------------
+
     ~Array();
+
+//---------------------------------------
+//! @brief Gives access to the requested element from the array
+//! @param position Position of the element
+//! @return The requested element
+//! @note This method is unsafe, it's highly suggested to use At() instead
+//---------------------------------------
+
     T& operator[](size_t position) const;
+
+//---------------------------------------
+//! @brief Gives access to the requested element from the array
+//! @param position Position of the element
+//! @return The requested element
+//---------------------------------------
+
     T& At(size_t position) const;
-    const Array<T>& operator=(const Array<T>&);//inc value of pointer
-    Array<T>& clone() const; //deep copy of object
+
+//---------------------------------------
+//! @brief Assigns a value of a variable to the object
+//! @param that Object with the required value
+//! @return The assigned object
+//---------------------------------------
+
+    const Array<T>& operator=(const Array<T>& that);
+
+//---------------------------------------
+//! @brief Clones an object via deep copy
+//! @return Clone of the object
+//---------------------------------------
+
+    Array<T>& clone() const;
+
+//---------------------------------------
+//! @brief Silent verifier
+//! @return True if object is OK
+//---------------------------------------
+
     bool ok() const;
+
+//---------------------------------------
+//! @brief Dumper
+//! @param out A stream to output the info into
+//! @param displacement A length of the padding
+//---------------------------------------
+
     void dump(std::ostream& out,size_t displacement = 0) const;
+
+//---------------------------------------
+//! @brief Returns the capacity of the object
+//! @return The capacity of the object
+//---------------------------------------
+
     size_t capacity() const;
+
+//---------------------------------------
+//! @brief Returns a value pointed by the internal pointer
+//! @return A value pointed by the internal pointer
+//---------------------------------------
+
     T& operator*() const;
-    Array<T>& operator+(int) const;
-    Array<T>& operator-(int) const;
+
+//---------------------------------------
+//! @brief Increments the internal pointer by the specified value
+//! @param value A value to increment the pointer with
+//! @return An object with increased internal pointer
+//---------------------------------------
+
+    Array<T> operator+(int value) const;
+
+//---------------------------------------
+//! @brief Decrements the internal pointer by the specified value
+//! @param value A value to decrement the pointer with
+//! @return An object with decreased internal pointer
+//---------------------------------------
+
+    Array<T> operator-(int value) const;
+
+//---------------------------------------
+//! @brief Increments the internal pointer by one
+//! @return A reference to the object
+//---------------------------------------
+
     Array<T>& operator++();
+
+//---------------------------------------
+//! @brief Decrements the internal pointer by one
+//! @return A reference to the object
+//---------------------------------------
+
     Array<T>& operator--();
-    Array<T>& operator+=(int);
-    Array<T>& operator-=(int);
+
+//---------------------------------------
+//! @brief Increments the internal pointer by the specified value
+//! @param value A value to increment the pointer with
+//! @return A reference to the object
+//---------------------------------------
+
+    Array<T>& operator+=(int value);
+
+//---------------------------------------
+//! @brief Decrements the internal pointer by the specified value
+//! @param value A value to decrement the pointer with
+//! @return An reference to the object
+//---------------------------------------
+
+    Array<T>& operator-=(int value);
 };
 
 
@@ -135,21 +258,21 @@ T& Array<T>::operator*() const
 }
 
 template <typename T>
-Array<T>& Array<T>::operator+(int value) const
+Array<T> Array<T>::operator+(int value) const
 {
     INFO(*this);
-    Array<T> * ret = new Array<T>(*this);
-    ret->current_ += value;
-    return *ret;
+    Array<T> ret(*this);
+    ret.current_ += value;
+    return ret;
 }
 
 template <typename T>
-Array<T>& Array<T>::operator-(int value) const
+Array<T> Array<T>::operator-(int value) const
 {
     INFO(*this);
-    Array<T> * ret = new Array<T>(*this);
-    ret->current_ -= value;
-    return *ret;
+    Array<T> ret(*this);
+    ret.current_ -= value;
+    return ret;
 }
 
 template <typename T>

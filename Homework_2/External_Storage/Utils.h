@@ -1,6 +1,7 @@
-//
-// Created by svuatoslav on 3/14/17.
-//
+//---------------------------------------
+//! @file Utils.h
+//! Extra utilities
+//---------------------------------------
 
 #ifndef ARRAY_UTILS_H
 #define ARRAY_UTILS_H
@@ -43,6 +44,14 @@ if(!(object).ok())              \
 
 namespace utils
 {
+
+//---------------------------------------
+//! @brief Forms a specific padding
+//! @param symbol A character to repeat
+//! @param amount Amount of repeats
+//! @return The formed padding string
+//---------------------------------------
+
     char* getPadding(char symbol, int amount)
     {
         char* padding;

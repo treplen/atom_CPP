@@ -1,6 +1,7 @@
-//
-// Created by svuatoslav on 3/14/17.
-//
+//---------------------------------------
+//! @file ArrayPointerBool.h
+//! Partial bool specification for the smart pointer
+//---------------------------------------
 
 #ifndef ARRAY_ARRAYPOINTERBOOL_H
 #define ARRAY_ARRAYPOINTERBOOL_H
@@ -19,17 +20,84 @@ private:
     void _upd();
     inline size_t _capacity();
 public:
-    bool dislink();//same
-    void link();//same
-    bool ok() const;//same
-    void dump(std::ostream& out,size_t displacement = 0) const;//same
+
+//---------------------------------------
+//! @brief Decrements the links counter by one
+//! @return True if there are no more links
+//---------------------------------------
+
+    bool dislink();
+
+//---------------------------------------
+//! @brief Increments the links counter by one
+//---------------------------------------
+
+    void link();
+
+//---------------------------------------
+//! @brief Silent verifier
+//! @return True if object is OK
+//---------------------------------------
+
+    bool ok() const;
+
+//---------------------------------------
+//! @brief Dumper
+//! @param out A stream to output the info into
+//! @param displacement A length of the padding
+//---------------------------------------
+
+    void dump(std::ostream& out,size_t displacement = 0) const;
+
+//---------------------------------------
+//! @brief A value that is used to determine destructed objects
+//---------------------------------------
+
     const uint32_t POISON = UINT32_MAX;
+
+    //---------------------------------------
+//! @brief Constructor
+//! @param capacity Maximum amount of elements in the storage
+//---------------------------------------
+
     explicit ArrayPointer(size_t capacity);
+
+//---------------------------------------
+//! @brief Copy constructor
+//! @param that An object to copy
+//---------------------------------------
+
     ArrayPointer(const ArrayPointer<bool>&);
+
+//---------------------------------------
+//! @brief Destructor
+//---------------------------------------
+
     ~ArrayPointer();
-    bool& operator[](const size_t); //unsafe
-    bool& At(const size_t); //safe
-    size_t capacity() const; //same
+
+//---------------------------------------
+//! @brief Gives access to the requested element from the array
+//! @param position Position of the element
+//! @return The requested element
+//! @note This method is unsafe, it's highly suggested to use At() instead
+//---------------------------------------
+
+    bool& operator[](const size_t);
+
+//---------------------------------------
+//! @brief Gives access to the requested element from the array
+//! @param position Position of the element
+//! @return The requested element
+//---------------------------------------
+
+    bool& At(const size_t);
+
+//---------------------------------------
+//! @brief Returns the capacity of the object
+//! @return The capacity of the object
+//---------------------------------------
+
+    size_t capacity() const;
 };
 
 

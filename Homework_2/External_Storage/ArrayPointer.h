@@ -1,6 +1,7 @@
-//
-// Created by sl on 11.03.17.
-//
+//---------------------------------------
+//! @file ArrayPointer.h
+//! Implementation of a smart pointer
+//---------------------------------------
 
 #ifndef ARRAY_ARRAYPOINTER_H
 #define ARRAY_ARRAYPOINTER_H
@@ -21,16 +22,83 @@ private:
     size_t capacity_;
     size_t links_;
 public:
+
+//---------------------------------------
+//! @brief Decrements the links counter by one
+//! @return True if there are no more links
+//---------------------------------------
+
     bool dislink();
+
+//---------------------------------------
+//! @brief Increments the links counter by one
+//---------------------------------------
+
     void link();
+
+//---------------------------------------
+//! @brief Silent verifier
+//! @return True if object is OK
+//---------------------------------------
+
     bool ok() const;
+
+//---------------------------------------
+//! @brief Dumper
+//! @param out A stream to output the info into
+//! @param displacement A length of the padding
+//---------------------------------------
+
     void dump(std::ostream& out,size_t displacement = 0) const;
+
+//---------------------------------------
+//! @brief A value that is used to determine destructed objects
+//---------------------------------------
+
     const uint32_t POISON = UINT32_MAX;
+
+//---------------------------------------
+//! @brief Constructor
+//! @param capacity Maximum amount of elements in the storage
+//---------------------------------------
+
     explicit ArrayPointer(size_t capacity);
-    ArrayPointer(const ArrayPointer<T>&);
+
+//---------------------------------------
+//! @brief Copy constructor
+//! @param that An object to copy
+//---------------------------------------
+
+    ArrayPointer(const ArrayPointer<T>& that);
+
+//---------------------------------------
+//! @brief Destructor
+//---------------------------------------
+
     ~ArrayPointer();
-    T& operator[](const size_t); //unsafe
-    T& At(const size_t); //safe
+
+//---------------------------------------
+//! @brief Gives access to the requested element from the array
+//! @param position Position of the element
+//! @return The requested element
+//! @note This method is unsafe, it's highly suggested to use At() instead
+//---------------------------------------
+
+    T& operator[](const size_t);
+
+//---------------------------------------
+//! @brief Gives access to the requested element from the array
+//! @param position Position of the element
+//! @return The requested element
+//---------------------------------------
+
+    T& At(const size_t);
+
+//---------------------------------------
+//! @brief Returns the capacity of the object
+//! @return The capacity of the object
+//---------------------------------------
+
     size_t capacity() const;
 };
 
