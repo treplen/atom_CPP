@@ -20,8 +20,8 @@ private:
     ArrayPointer<T> * pointer_;
 
 public:
-    Iterator<T>& begin();
-    Iterator<T>& end();
+    Iterator<T> begin();
+    Iterator<T> end();
 
     explicit Array(size_t capacity);
     Array(const Array<T>&);
@@ -150,17 +150,15 @@ Array<T>& Array<T>::operator-=(int value)
 }
 
 template <typename T>
-Iterator<T>& Array<T>::begin()
+Iterator<T> Array<T>::begin()
 {
-    Iterator<T> i(this);
-    return i.GetBegin();
+    return Iterator<T>(this,0);
 }
 
 template <typename T>
-Iterator<T>& Array<T>::end()
+Iterator<T> Array<T>::end()
 {
-    Iterator<T> i(this);
-    return i.GetEnd();
+    return Iterator<T>(this,capacity());
 }
 //
 //

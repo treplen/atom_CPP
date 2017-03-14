@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Array.h"
 
-int main()
+int main(int argc, char** argv)
 {
     Array <int> a(20);
     for (int i=0; i<20; i++)

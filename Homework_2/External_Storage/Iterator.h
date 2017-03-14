@@ -9,51 +9,54 @@
 template<typename T>
 class Iterator
 {
+private:
+    Collection<T> *c_;
+    size_t index_;
 public:
     Iterator(Collection<T> *col):c_(col)
     {}
-    Iterator(Collection<T>* col, int index):c_(col), index_(index)
+    Iterator(Collection<T>* col, size_t index):c_(col), index_(index)
     {}
 
-    Iterator<T>& GetBegin()
+    Iterator<T>& SetBegin()
     {
         index_ = 0;
         return *this;
     }
 
-    Iterator<T>& GetEnd()
+    Iterator<T>& SetEnd()
     {
         index_ = c_->capacity();
         return *this;
     }
 
-    bool operator==(Iterator<T>& it)const
+    bool operator==(const Iterator<T>& it)const
     {
         return it.index_ == index_;
     }
 
-    bool operator!=(Iterator<T>& it)const
+    bool operator!=(const Iterator<T>& it)const
     {
         return it.index_ != index_;
     }
 
-    bool operator<(Iterator<T>& it)const
+    bool operator<(const Iterator<T>& it)const
     {
         return index_ < it.index_;
     }
 
-    bool operator>(Iterator<T>& it)const
+    bool operator>(const Iterator<T>& it)const
     {
         return index_ > it.index_;
     }
 
 
-    bool operator<=(Iterator<T>& it)const
+    bool operator<=(const Iterator<T>& it)const
     {
         return index_ <= it.index_;
     }
 
-    bool operator>=(Iterator<T>& it)const
+    bool operator>=(const Iterator<T>& it)const
     {
         return index_ >= it.index_;
     }
@@ -75,12 +78,12 @@ public:
         return (*c_)[index_];
     }
 
-    Iterator<T>& operator+(int value) const
+    Iterator<T> operator+(int value) const
     {
         return Iterator<T>(c_, index_+value);
     }
 
-    Iterator<T>& operator-(int value) const
+    Iterator<T> operator-(int value) const
     {
         return Iterator<T>(c_, index_-value);
     }
@@ -91,16 +94,11 @@ public:
         return *this;
     }
 
-    T& operator-=(int value) const
+    Iterator<T>& operator-=(int value)
     {
-        index_+=value;
+        index_-=value;
         return *this;
     }
-
-
-private:
-    Collection<T> *c_;
-    int index_;
 };
 
 
