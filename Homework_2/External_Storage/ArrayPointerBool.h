@@ -6,6 +6,12 @@
 #ifndef ARRAY_ARRAYPOINTERBOOL_H
 #define ARRAY_ARRAYPOINTERBOOL_H
 
+#include <cstring>
+#include <cstdint>
+#include <iostream>
+#include <iomanip>
+#include "Utils.h"
+
 template <>
 class ArrayPointer<bool>
 {
@@ -105,14 +111,14 @@ void ArrayPointer<bool>::link()
 {
     INFO(*this);
     links_++;
-    log("bool add link"+std::to_string(links_));
+    LOG("bool add link"+std::to_string(links_));
     INFO(*this);
 }
 
 bool ArrayPointer<bool>::dislink()
 {
     INFO(*this);
-    log("bool rem link"+std::to_string(links_-1));
+    LOG("bool rem link"+std::to_string(links_-1));
     INFO(*this);
     return !(--links_);
 }
@@ -203,7 +209,7 @@ ArrayPointer<bool>::~ArrayPointer()
 {
     INFO(*this);
     delete[] data_;
-    log("bool free res");
+    LOG("bool free res");
     data_ = nullptr;
     capacity_ = POISON;
     links_ = POISON;

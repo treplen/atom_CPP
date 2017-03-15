@@ -10,7 +10,7 @@
 #include <cstring>
 #include <cmath>
 #include "ArrayPointer.h"
-#include "ArrayPointerBool.h"
+//#include "ArrayPointerBool.h"
 #include "Collection.h"
 #include "Iterator.h"
 #include "Utils.h"
@@ -22,6 +22,7 @@ class Array:Collection<T>
 private:
     int current_;
     ArrayPointer<T> * pointer_;
+    static void swap(Array<T> *one, Array<T> *another);
 
 public:
 
@@ -175,7 +176,7 @@ Array<T>::Array(size_t capacity):current_(0), pointer_(new ArrayPointer<T>(capac
 }
 
 template <typename T>
-Array<T>::Array(const Array<T>& that):current_(0), pointer_(that.pointer_)
+Array<T>::Array(const Array<T>& that):current_(that.current_), pointer_(that.pointer_)
 {
     that.pointer_->link();
     INFO(*this);
@@ -207,7 +208,7 @@ const Array<T>& Array<T>::operator=(const Array& that)
 {
     INFO(*this);
     Array swapper(that);
-    std::swap(*this, swapper);
+    swap(&swapper, this);
     INFO(*this);
     return *this;
 }
@@ -254,7 +255,7 @@ T& Array<T>::operator*() const
 {
     INFO(*this);
     if (current_ < 0) throw std::out_of_range("minus is not allow");
-    return (*pointer_)[current_];
+    return pointer_->At(current_);
 }
 
 template <typename T>
@@ -325,21 +326,18 @@ Iterator<T> Array<T>::end()
     INFO(*this);
     return Iterator<T>(this,capacity());
 }
-//
-//
-//
-//
-//
-//
-//
-//template <typename T>
-//class Iterator {
-//public:
-//
-//private:
-//
-//
-//
-//};
 
+template <typename T>
+void Array<T>::swap(Array<T> *one, Array<T> *another)
+{
+
+    ArrayPointer<T> *pointer = one->pointer_;
+    int current = one->current_;
+
+    one->current_ = another->current_;
+    one->pointer_ = another->pointer_;
+
+    another->current_ = current;
+    another->pointer_ = pointer;
+}
 #endif //HOMEWORK_2_ARRAY_H

@@ -42,6 +42,8 @@ if(!(object).ok())              \
 #endif
 #endif
 
+#define LOG(x) LOG_STREAM<<( x )<<std::endl
+
 namespace utils
 {
 
@@ -52,14 +54,7 @@ namespace utils
 //! @return The formed padding string
 //---------------------------------------
 
-    char* getPadding(char symbol, int amount)
-    {
-        char* padding;
-        padding = new char[amount+1];
-        for(int i = 0;i<amount;i++) padding[i]=symbol;
-        padding[amount]=0;
-        return padding;
-    }
+    char* getPadding(char symbol, int amount);
 }
 
 #endif //ARRAY_UTILS_H

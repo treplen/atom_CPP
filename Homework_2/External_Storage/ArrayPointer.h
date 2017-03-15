@@ -12,8 +12,6 @@
 #include <iomanip>
 #include "Utils.h"
 
-#define log(x) std::cout<<( x )<<std::endl
-
 template <typename T>
 class ArrayPointer
 {
@@ -142,7 +140,7 @@ ArrayPointer<T>::~ArrayPointer()
 {
     INFO(*this);
     delete[] data_;
-    log("free res");
+    LOG("free res");
     data_ = nullptr;
     capacity_ = POISON;
     links_ = POISON;
@@ -200,7 +198,7 @@ void ArrayPointer<T>::link()
 {
     INFO(*this);
     links_++;
-    log("add link"+std::to_string(links_));
+    LOG("add link"+std::to_string(links_));
     INFO(*this);
 }
 
@@ -208,7 +206,7 @@ template <typename T>
 bool ArrayPointer<T>::dislink()
 {
     INFO(*this);
-    log("rem link"+std::to_string(links_-1));
+    LOG("rem link"+std::to_string(links_-1));
     INFO(*this);
     return !(--links_);
 }
