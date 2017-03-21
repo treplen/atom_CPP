@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <iostream>
 
-#include "helper.h"
+#define log(x) std::cout<<( x )<<std::endl
 
 template <typename T>
 class ArrayPointer
@@ -146,10 +146,6 @@ public:
     size_t capacity() const; //same
 };
 
-bool ArrayPointer<bool>::ok() const
-{
-    return (links_ != POISON) && (capacity_ != POISON);
-}
 
 void ArrayPointer<bool>::link()
 {
@@ -167,7 +163,6 @@ size_t ArrayPointer<bool>::capacity() const
 {
     return capacity_;
 }
-
 size_t ArrayPointer<bool>::_capacity() {
     return (int)ceil(1. * capacity_ / 8);
 }
@@ -178,7 +173,6 @@ ArrayPointer<bool>::ArrayPointer(size_t capacity): data_(nullptr), capacity_(cap
     try
     {
         data_ = new char[_capacity()];
-
     }
     catch(std::bad_alloc e)
     {
