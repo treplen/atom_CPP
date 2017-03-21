@@ -132,7 +132,7 @@ public:
 //! @return None
 //---------------------------------------
 
-    void pop_back();
+    const T pop_back();
 
 };
 
@@ -150,6 +150,7 @@ ArrayPointer<T>::ArrayPointer(size_t capacity):data_(nullptr), capacity_(capacit
     {
         data_ = nullptr;
         capacity_ = 0;
+        size_ = 0;
     }
     INFO(*this);
 }
@@ -167,6 +168,7 @@ ArrayPointer<T>::ArrayPointer(const ArrayPointer<T> & array_pointer):capacity_(a
     {
         data_ = nullptr;
         capacity_ = 0;
+        size_ = 0;
     }
     INFO(*this);
 }
@@ -179,6 +181,7 @@ ArrayPointer<T>::~ArrayPointer()
     LOG("free res");
     data_ = nullptr;
     capacity_ = POISON;
+    size_ = POISON;
     links_ = POISON;
 }
 
@@ -193,7 +196,12 @@ template <typename T>
 T& ArrayPointer<T>::At(const size_t index)
 {
     INFO(*this);
-    if (index < capacity_ && index < size_) return data_[index];
+    if (index < capacity_)
+    {
+        if(size_<=index)
+            size_ = index+1;
+        return data_[index];
+    }
     throw std::out_of_range("bad value");
 }
 
@@ -211,6 +219,7 @@ void ArrayPointer<T>::dump(std::ostream& out,size_t displacement) const
     out<<tabs<<"ArrayPointer("<<(ok()?"OK":"ERROR")<<") @ "<<(void*)this<<'\n';
     out<<tabs<<"{\n";
     out<<tabs<<"\tcapacity: "<<capacity_<<(capacity_==POISON?" (POISON)":"")<<'\n';
+    out<<tabs<<"\tsize: "<<size_<<(size_==POISON?" (POISON)":"")<<'\n';
     out<<tabs<<"\tlinks: "<<links_<<(links_==POISON?" (POISON)":"")<<'\n';
     out<<tabs<<"\tdata @ "<<(void*)data_<<" :\n";
     out<<tabs<<"\t{\n";
@@ -283,9 +292,9 @@ void ArrayPointer<T>::push_back(T & elem)
 }
 
 template <typename T>
-void ArrayPointer<T>::pop_back()
+const T ArrayPointer<T>::pop_back()
 {
-    size_--;
+    return data_[--size_];
 }
 
 

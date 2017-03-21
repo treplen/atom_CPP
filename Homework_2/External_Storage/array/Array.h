@@ -38,19 +38,12 @@ public:
 
     Iterator<T> end();
 
-
-//---------------------------------------
-//! @brief Constructor
-//---------------------------------------
-
-    Array();
-
 //---------------------------------------
 //! @brief Constructor
 //! @param capacity Maximum amount of elements in the array
 //---------------------------------------
 
-    explicit Array(size_t capacity);
+    explicit Array(size_t capacity=0);
 
 //---------------------------------------
 //! @brief Copy constructor
@@ -216,12 +209,6 @@ public:
 
 
 };
-
-template <typename T>
-Array<T>::Array():current_(0), pointer_(new ArrayPointer<T>(0))
-{
-    INFO(*this);
-}
 
 template <typename T>
 Array<T>::Array(size_t capacity):current_(0), pointer_(new ArrayPointer<T>(capacity))
