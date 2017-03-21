@@ -18,6 +18,7 @@ class ArrayPointer
 private:
     T * data_;
     size_t capacity_;
+    size_t size_;
     size_t links_;
 public:
 
@@ -98,12 +99,47 @@ public:
 //---------------------------------------
 
     size_t capacity() const;
+
+//---------------------------------------
+//! @brief Returns the capacity of the object
+//! @return The capacity of the object
+//---------------------------------------
+
+    size_t size() const;
+
+//---------------------------------------
+//! @brief Change capacity and size of obj
+//! @throws std::bad_alloc
+//! @param n new capacity of array
+//! @return None
+//---------------------------------------
+
+    void resize(size_t );
+
+//---------------------------------------
+//! @brief Push the value to array tail
+//! @throws std::bad_alloc
+//! @param elem element pushing to array
+//! @return None
+//---------------------------------------
+
+    void push_back(T & );
+
+//---------------------------------------
+//! @brief Pop the value from array tail
+//! @throws std::out_of_range
+//! @param elem element pushing to array
+//! @return None
+//---------------------------------------
+
+    void pop_back();
+
 };
 
 
 
 template <typename T>
-ArrayPointer<T>::ArrayPointer(size_t capacity):data_(nullptr), capacity_(capacity), links_(1)
+ArrayPointer<T>::ArrayPointer(size_t capacity):data_(nullptr), capacity_(capacity), size_(capacity), links_(1)
 {
     if (capacity_ == 0) return;
     try
@@ -119,12 +155,12 @@ ArrayPointer<T>::ArrayPointer(size_t capacity):data_(nullptr), capacity_(capacit
 }
 
 template <typename T>
-ArrayPointer<T>::ArrayPointer(const ArrayPointer<T> & array_pointer):capacity_(array_pointer.capacity_), links_(1)
+ArrayPointer<T>::ArrayPointer(const ArrayPointer<T> & array_pointer):capacity_(array_pointer.size_), size_(array_pointer.size_), links_(1)
 {
     try
     {
         data_ = new T[capacity_];
-        for (size_t i = 0; i < capacity_; i++)
+        for (size_t i = 0; i < size_; i++)
             data_[i] = array_pointer.data_[i];
     }
     catch (std::bad_alloc e)
@@ -157,14 +193,14 @@ template <typename T>
 T& ArrayPointer<T>::At(const size_t index)
 {
     INFO(*this);
-    if (index<capacity_) return data_[index];
+    if (index < capacity_ && index < size_) return data_[index];
     throw std::out_of_range("bad value");
 }
 
 template <typename T>
 bool ArrayPointer<T>::ok() const
 {
-    return (links_ != POISON) && (capacity_ != POISON);
+    return (links_ != POISON) && (capacity_ != POISON) && (size_<=capacity_);
 }
 
 template <typename T>
@@ -217,5 +253,40 @@ size_t ArrayPointer<T>::capacity() const
     INFO(*this);
     return capacity_;
 }
+
+template <typename T>
+size_t ArrayPointer<T>::size() const
+{
+    INFO(*this);
+    return size_;
+}
+
+template <typename T>
+void ArrayPointer<T>::resize(size_t n) {
+    INFO(*this);
+    T* dat = new T[n];
+    size_ = std::min(n, size_);
+    for (size_t i = 0; i < size_; i++)
+        dat[i] = data_[i];
+    delete[] data_;
+    data_ = dat;
+    capacity_ = n;
+    INFO(*this);
+}
+
+template <typename T>
+void ArrayPointer<T>::push_back(T & elem)
+{
+    if (size_ == capacity_)
+        resize(capacity_ == 0 ? 1 : capacity_ * 2);
+    data_[size_++] = elem;
+}
+
+template <typename T>
+void ArrayPointer<T>::pop_back()
+{
+    size_--;
+}
+
 
 #endif //ARRAY_ARRAYPOINTER_H

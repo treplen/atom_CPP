@@ -10,11 +10,10 @@
 #include <cstring>
 #include <cmath>
 #include "ArrayPointer.h"
-//#include "ArrayPointerBool.h"
+#include "ArrayPointerBool.h"
 #include "Collection.h"
 #include "Iterator.h"
 #include "Utils.h"
-
 
 template <typename T>
 class Array:Collection<T>
@@ -23,7 +22,6 @@ private:
     int current_;
     ArrayPointer<T> * pointer_;
     static void swap(Array<T> *one, Array<T> *another);
-
 public:
 
 //---------------------------------------
@@ -39,6 +37,13 @@ public:
 //---------------------------------------
 
     Iterator<T> end();
+
+
+//---------------------------------------
+//! @brief Constructor
+//---------------------------------------
+
+    Array();
 
 //---------------------------------------
 //! @brief Constructor
@@ -114,6 +119,14 @@ public:
 
     size_t capacity() const;
 
+
+//---------------------------------------
+//! @brief Returns the size of the object
+//! @return The size of the object
+//---------------------------------------
+
+    size_t size() const;
+
 //---------------------------------------
 //! @brief Returns a value pointed by the internal pointer
 //! @return A value pointed by the internal pointer
@@ -166,8 +179,49 @@ public:
 //---------------------------------------
 
     Array<T>& operator-=(int value);
+
+    //---------------------------------------
+//! @brief Change capacity and size of obj
+//! @throws std::bad_alloc
+//! @param n new capacity of array
+//! @return None
+//---------------------------------------
+
+    void resize(size_t );
+
+//---------------------------------------
+//! @brief Change capacity to size of array
+//! @return None
+//---------------------------------------
+
+    void shrink_to_fit();
+
+//---------------------------------------
+//! @brief Push the value to array tail
+//! @throws std::bad_alloc
+//! @param elem element pushing to array
+//! @return None
+//---------------------------------------
+
+    void push_back(T & );
+    void push_back(T && );
+//---------------------------------------
+//! @brief Pop the value from array tail
+//! @throws std::out_of_range
+//! @param elem element pushing to array
+//! @return None
+//---------------------------------------
+
+    void pop_back();
+
+
 };
 
+template <typename T>
+Array<T>::Array():current_(0), pointer_(new ArrayPointer<T>(0))
+{
+    INFO(*this);
+}
 
 template <typename T>
 Array<T>::Array(size_t capacity):current_(0), pointer_(new ArrayPointer<T>(capacity))
@@ -314,6 +368,20 @@ Array<T>& Array<T>::operator-=(int value)
 }
 
 template <typename T>
+void Array<T>::swap(Array<T> *one, Array<T> *another)
+{
+
+    ArrayPointer<T> *pointer = one->pointer_;
+    int current = one->current_;
+
+    one->current_ = another->current_;
+    one->pointer_ = another->pointer_;
+
+    another->current_ = current;
+    another->pointer_ = pointer;
+}
+
+template <typename T>
 Iterator<T> Array<T>::begin()
 {
     INFO(*this);
@@ -328,16 +396,41 @@ Iterator<T> Array<T>::end()
 }
 
 template <typename T>
-void Array<T>::swap(Array<T> *one, Array<T> *another)
+void Array<T>::resize(size_t e)
 {
-
-    ArrayPointer<T> *pointer = one->pointer_;
-    int current = one->current_;
-
-    one->current_ = another->current_;
-    one->pointer_ = another->pointer_;
-
-    another->current_ = current;
-    another->pointer_ = pointer;
+    pointer_->resize(e);
 }
+
+template <typename T>
+void Array<T>::pop_back()
+{
+    pointer_->pop_back();
+}
+
+template <typename T>
+void Array<T>::shrink_to_fit()
+{
+    resize(size());
+}
+
+template <typename T>
+void Array<T>::push_back(T & elem)
+{
+    pointer_->push_back(elem);
+}
+
+template <typename T>
+void Array<T>::push_back(T && elem)
+{
+    T &val = elem;
+    pointer_->push_back(val);
+}
+
+template <typename T>
+size_t Array<T>::size() const {
+    return pointer_->size();
+}
+
+
+
 #endif //HOMEWORK_2_ARRAY_H

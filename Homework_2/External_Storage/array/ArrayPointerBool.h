@@ -19,12 +19,14 @@ private:
     int access[8] = {0b00000001, 0b00000010,0b00000100,0b00001000,0b00010000,0b00100000,0b01000000,0b10000000};
     char * data_;
     size_t capacity_;
+    size_t size_;
     size_t links_;
-    bool helper_; //i'm useless here...
-    bool & ret_val_;
+//    bool helper_; //i'm useless here...
+    bool && ret_val_;
     int index_;
     void _upd();
     inline size_t _capacity();
+    inline size_t _size();
 public:
 
 //---------------------------------------
@@ -104,6 +106,39 @@ public:
 //---------------------------------------
 
     size_t capacity() const;
+
+//---------------------------------------
+//! @brief Returns the size of the object
+//! @return The size of the object
+//---------------------------------------
+
+    size_t size() const;
+
+//---------------------------------------
+//! @brief Change capacity and size of obj
+//! @throws std::bad_alloc
+//! @param n new capacity of array
+//! @return None
+//---------------------------------------
+
+    void resize(size_t );
+
+//---------------------------------------
+//! @brief Push the value to array tail
+//! @throws std::bad_alloc
+//! @param elem element pushing to array
+//! @return None
+//---------------------------------------
+
+    void push_back(bool );
+
+//---------------------------------------
+//! @brief Pop the value from array tail
+//! @throws std::out_of_range
+//! @param elem element pushing to array
+//! @return None
+//---------------------------------------
+    void pop_back();
 };
 
 
@@ -132,7 +167,7 @@ size_t ArrayPointer<bool>::_capacity() {
     return (int)ceil(1. * capacity_ / 8);
 }
 
-ArrayPointer<bool>::ArrayPointer(size_t capacity): data_(nullptr), capacity_(capacity), links_(1), helper_(false), ret_val_(helper_), index_(0)
+ArrayPointer<bool>::ArrayPointer(size_t capacity): data_(nullptr), capacity_(capacity),size_(0), links_(1), ret_val_(false), index_(0)
 {
     if (capacity == 0) return;
     try
@@ -147,7 +182,7 @@ ArrayPointer<bool>::ArrayPointer(size_t capacity): data_(nullptr), capacity_(cap
     INFO(*this);
 }
 
-ArrayPointer<bool>::ArrayPointer(const ArrayPointer<bool> & array_pointer):capacity_(array_pointer.capacity_), links_(1), helper_(false), ret_val_(helper_), index_(0)
+ArrayPointer<bool>::ArrayPointer(const ArrayPointer<bool> & array_pointer):capacity_(array_pointer.size_), size_(array_pointer.size_), links_(1), ret_val_(false), index_(0)
 {
     try
     {
@@ -235,9 +270,9 @@ void ArrayPointer<bool>::dump(std::ostream& out,size_t displacement) const
         int i = index / 8;
         int j = index % 8;
         char c = data_ [i];
-        ret_val_ =(c & access[j]) ? 1:0;
+        bool b = (c & access[j]) ? 1:0;
         out<<tabs<<"\t\tdata_["<<index<<"] = ";
-        out<<ret_val_<<'\n';
+        out<< b <<'\n';
     }
 
     out<<tabs<<"\t}\n";
@@ -245,5 +280,41 @@ void ArrayPointer<bool>::dump(std::ostream& out,size_t displacement) const
 
     delete [] tabs;
 }
+
+size_t ArrayPointer<bool>::size() const
+{
+    INFO(*this);
+    return size_;
+}
+
+void ArrayPointer<bool>::resize(size_t n) {
+    INFO(*this);
+    capacity_ = n;
+    size_ = std::min(capacity_, size_);
+    char* dat = new char[_size()];
+    for (size_t i = 0; i < _size(); i++)
+        dat[i] = data_[i];
+    delete[] data_;
+    data_ = dat;
+    INFO(*this);
+}
+
+void ArrayPointer<bool>::push_back(bool elem)
+{
+    if (size_ == capacity_)
+        resize(capacity_ * 8);
+    data_[size_++] = elem;
+}
+
+
+void ArrayPointer<bool>::pop_back()
+{
+    size_--;
+}
+
+size_t ArrayPointer<bool>::_size() {
+    return (int)ceil(1. * size_ / 8);
+}
+
 
 #endif //ARRAY_ARRAYPOINTERBOOL_H

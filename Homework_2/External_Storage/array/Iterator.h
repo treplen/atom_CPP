@@ -251,5 +251,4 @@ public:
 
 };
 
-
 #endif //ARRAY_ITERATOR_H
