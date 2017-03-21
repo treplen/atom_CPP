@@ -1,10 +1,10 @@
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-set(SOURCE testbool.cpp)
+#set(SOURCE testbool.cpp)
 
 #or, not both(will not complie)
 
-#set(SOURCE test.cpp)
+set(SOURCE test.cpp)
 
 add_executable(runtest ${SOURCE})
 
