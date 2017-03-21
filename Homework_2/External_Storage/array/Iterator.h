@@ -103,5 +103,4 @@ private:
     int index_;
 };
 
-
 #endif //ARRAY_ITERATOR_H

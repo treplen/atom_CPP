@@ -3,5 +3,12 @@ project(Array)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES Array.h ArrayPointer.h main.cpp Iterator.h Collection.h)
-add_executable(Array ${SOURCE_FILES})
+set(SOURCE_FILES main.cpp )
+add_executable(run ${SOURCE_FILES})
+
+include_directories(array)
+
+add_subdirectory(test)
+add_subdirectory(array)
+
+target_link_libraries(run myarray)
