@@ -1,29 +1,30 @@
 //---------------------------------------
-//! @file ArrayPointer.h
-//! Implementation of a smart pointer
+//! @file ArrayPointerBool.h
+//! Partial bool specification for the smart pointer
 //---------------------------------------
 
-#ifndef ARRAY_ARRAYPOINTER_H
-#define ARRAY_ARRAYPOINTER_H
+#ifndef ARRAY_ARRAYPOINTERBOOL_H
+#define ARRAY_ARRAYPOINTERBOOL_H
 
 #include <cstring>
 #include <cstdint>
 #include <iostream>
-<<<<<<< HEAD:Homework_2/External_Storage/array/ArrayPointer.h
-
-#include "helper.h"
-=======
 #include <iomanip>
 #include "Utils.h"
->>>>>>> upstream/Homework_2_External_storage:Homework_2/External_Storage/ArrayPointer.h
 
-template <typename T>
-class ArrayPointer
+template <>
+class ArrayPointer<bool>
 {
 private:
-    T * data_;
+    int access[8] = {0b00000001, 0b00000010,0b00000100,0b00001000,0b00010000,0b00100000,0b01000000,0b10000000};
+    char * data_;
     size_t capacity_;
     size_t links_;
+    bool helper_; //i'm useless here...
+    bool & ret_val_;
+    int index_;
+    void _upd();
+    inline size_t _capacity();
 public:
 
 //---------------------------------------
@@ -60,7 +61,7 @@ public:
 
     const uint32_t POISON = UINT32_MAX;
 
-//---------------------------------------
+    //---------------------------------------
 //! @brief Constructor
 //! @param capacity Maximum amount of elements in the storage
 //---------------------------------------
@@ -72,7 +73,7 @@ public:
 //! @param that An object to copy
 //---------------------------------------
 
-    ArrayPointer(const ArrayPointer<T>& that);
+    ArrayPointer(const ArrayPointer<bool>&);
 
 //---------------------------------------
 //! @brief Destructor
@@ -87,7 +88,7 @@ public:
 //! @note This method is unsafe, it's highly suggested to use At() instead
 //---------------------------------------
 
-    T& operator[](const size_t);
+    bool& operator[](const size_t);
 
 //---------------------------------------
 //! @brief Gives access to the requested element from the array
@@ -95,7 +96,7 @@ public:
 //! @return The requested element
 //---------------------------------------
 
-    T& At(const size_t);
+    bool& At(const size_t);
 
 //---------------------------------------
 //! @brief Returns the capacity of the object
@@ -106,14 +107,37 @@ public:
 };
 
 
-
-template <typename T>
-ArrayPointer<T>::ArrayPointer(size_t capacity):data_(nullptr), capacity_(capacity), links_(1)
+void ArrayPointer<bool>::link()
 {
-    if (capacity_ == 0) return;
+    INFO(*this);
+    links_++;
+    LOG("bool add link"+std::to_string(links_));
+    INFO(*this);
+}
+
+bool ArrayPointer<bool>::dislink()
+{
+    INFO(*this);
+    LOG("bool rem link"+std::to_string(links_-1));
+    INFO(*this);
+    return !(--links_);
+}
+
+size_t ArrayPointer<bool>::capacity() const
+{
+    INFO(*this);
+    return capacity_;
+}
+size_t ArrayPointer<bool>::_capacity() {
+    return (int)ceil(1. * capacity_ / 8);
+}
+
+ArrayPointer<bool>::ArrayPointer(size_t capacity): data_(nullptr), capacity_(capacity), links_(1), helper_(false), ret_val_(helper_), index_(0)
+{
+    if (capacity == 0) return;
     try
     {
-        data_ = new T[capacity];
+        data_ = new char[_capacity()];
     }
     catch(std::bad_alloc e)
     {
@@ -123,13 +147,13 @@ ArrayPointer<T>::ArrayPointer(size_t capacity):data_(nullptr), capacity_(capacit
     INFO(*this);
 }
 
-template <typename T>
-ArrayPointer<T>::ArrayPointer(const ArrayPointer<T> & array_pointer):capacity_(array_pointer.capacity_), links_(1)
+ArrayPointer<bool>::ArrayPointer(const ArrayPointer<bool> & array_pointer):capacity_(array_pointer.capacity_), links_(1), helper_(false), ret_val_(helper_), index_(0)
 {
     try
     {
-        data_ = new T[capacity_];
-        for (size_t i = 0; i < capacity_; i++)
+        int cap = _capacity();
+        data_ = new char[cap];
+        for (size_t i = 0; i < cap; i++)
             data_[i] = array_pointer.data_[i];
     }
     catch (std::bad_alloc e)
@@ -140,40 +164,63 @@ ArrayPointer<T>::ArrayPointer(const ArrayPointer<T> & array_pointer):capacity_(a
     INFO(*this);
 }
 
-template <typename T>
-ArrayPointer<T>::~ArrayPointer()
+void ArrayPointer<bool>::_upd()
+{
+    INFO(*this);
+    int i = index_ / 8;
+    int j = index_ % 8;
+    data_ [i] &= ~access[j];
+    if (ret_val_) data_ [i] |=access[j];
+    INFO(*this);
+}
+
+bool& ArrayPointer<bool>::operator[](const size_t index)
+{
+    INFO(*this);
+    _upd();
+
+    index_=index;
+    int i = index / 8;
+    int j = index % 8;
+    char c = data_ [i];
+    ret_val_ =(c & access[j]) ? 1:0;
+    INFO(*this);
+    return ret_val_;
+}
+
+bool& ArrayPointer<bool>::At(const size_t index)
+{
+    INFO(*this);
+    _upd();
+    if (index<capacity_){
+        index_=index;
+        int i = index / 8;
+        int j = index % 8;
+        char c = data_ [i];
+        ret_val_ =(c & access[j]) ? 1 : 0;
+        INFO(*this);
+        return ret_val_;
+    }
+    INFO(*this);
+    throw std::out_of_range("bad value");
+}
+
+ArrayPointer<bool>::~ArrayPointer()
 {
     INFO(*this);
     delete[] data_;
-    LOG("free res");
+    LOG("bool free res");
     data_ = nullptr;
     capacity_ = POISON;
     links_ = POISON;
 }
 
-template <typename T>
-T& ArrayPointer<T>::operator[](const size_t index)
-{
-    INFO(*this);
-    return data_[index];
-}
-
-template <typename T>
-T& ArrayPointer<T>::At(const size_t index)
-{
-    INFO(*this);
-    if (index<capacity_) return data_[index];
-    throw std::out_of_range("bad value");
-}
-
-template <typename T>
-bool ArrayPointer<T>::ok() const
+bool ArrayPointer<bool>::ok() const
 {
     return (links_ != POISON) && (capacity_ != POISON);
 }
 
-template <typename T>
-void ArrayPointer<T>::dump(std::ostream& out,size_t displacement) const
+void ArrayPointer<bool>::dump(std::ostream& out,size_t displacement) const
 {
     char *tabs = utils::getPadding('\t',displacement);
 
@@ -184,12 +231,13 @@ void ArrayPointer<T>::dump(std::ostream& out,size_t displacement) const
     out<<tabs<<"\tdata @ "<<(void*)data_<<" :\n";
     out<<tabs<<"\t{\n";
 
-    for(int i = 0;i<capacity_;i++){
-        const int*casted = reinterpret_cast<const int*>(&data_[i]);
-        out<<tabs<<"\t\tdata_["<<i<<"] = 0x";
-        for(int j = 0;j<((double)sizeof(T))/4;j++)
-            out<<std::setw(sizeof(T)*2<8?sizeof(T)*2:8)<<std::setfill('0')<<std::hex<<(casted[j]%(int)pow(2,8*sizeof(T)))<<std::dec;
-        out<<'\n';
+    for(int index = 0;index<capacity_;index++){
+        int i = index / 8;
+        int j = index % 8;
+        char c = data_ [i];
+        ret_val_ =(c & access[j]) ? 1:0;
+        out<<tabs<<"\t\tdata_["<<index<<"] = ";
+        out<<ret_val_<<'\n';
     }
 
     out<<tabs<<"\t}\n";
@@ -198,29 +246,4 @@ void ArrayPointer<T>::dump(std::ostream& out,size_t displacement) const
     delete [] tabs;
 }
 
-template <typename T>
-void ArrayPointer<T>::link()
-{
-    INFO(*this);
-    links_++;
-    LOG("add link"+std::to_string(links_));
-    INFO(*this);
-}
-
-template <typename T>
-bool ArrayPointer<T>::dislink()
-{
-    INFO(*this);
-    LOG("rem link"+std::to_string(links_-1));
-    INFO(*this);
-    return !(--links_);
-}
-
-template <typename T>
-size_t ArrayPointer<T>::capacity() const
-{
-    INFO(*this);
-    return capacity_;
-}
-
-#endif //ARRAY_ARRAYPOINTER_H
+#endif //ARRAY_ARRAYPOINTERBOOL_H
