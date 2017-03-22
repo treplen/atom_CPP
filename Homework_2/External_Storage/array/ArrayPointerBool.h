@@ -21,8 +21,8 @@ private:
     size_t capacity_;
     size_t size_;
     size_t links_;
-//    bool helper_; //i'm useless here...
-    bool && ret_val_;
+    bool helper_; //i'm useless here...
+    bool & ret_val_;
     int index_;
     void _upd();
     inline size_t _capacity();
@@ -75,7 +75,7 @@ public:
 //! @param that An object to copy
 //---------------------------------------
 
-    ArrayPointer(const ArrayPointer<bool>&);
+    ArrayPointer(ArrayPointer<bool>&);
 
 //---------------------------------------
 //! @brief Destructor
@@ -138,7 +138,7 @@ public:
 //! @param elem element pushing to array
 //! @return None
 //---------------------------------------
-    void pop_back();
+    const bool pop_back();
 };
 
 
@@ -167,7 +167,7 @@ size_t ArrayPointer<bool>::_capacity() {
     return (int)ceil(1. * capacity_ / 8);
 }
 
-ArrayPointer<bool>::ArrayPointer(size_t capacity): data_(nullptr), capacity_(capacity),size_(0), links_(1), ret_val_(false), index_(0)
+ArrayPointer<bool>::ArrayPointer(size_t capacity): data_(nullptr), capacity_(capacity),size_(capacity), links_(1), helper_(false), ret_val_(helper_), index_(0)
 {
     if (capacity == 0) return;
     try
@@ -182,8 +182,9 @@ ArrayPointer<bool>::ArrayPointer(size_t capacity): data_(nullptr), capacity_(cap
     INFO(*this);
 }
 
-ArrayPointer<bool>::ArrayPointer(const ArrayPointer<bool> & array_pointer):capacity_(array_pointer.size_), size_(array_pointer.size_), links_(1), ret_val_(false), index_(0)
+ArrayPointer<bool>::ArrayPointer(ArrayPointer<bool> & array_pointer):capacity_(array_pointer.size_), size_(array_pointer.size_), links_(1), helper_(false), ret_val_(helper_), index_(0)
 {
+    array_pointer._upd();
     try
     {
         int cap = _capacity();
@@ -307,9 +308,9 @@ void ArrayPointer<bool>::push_back(bool elem)
 }
 
 
-void ArrayPointer<bool>::pop_back()
+const bool ArrayPointer<bool>::pop_back()
 {
-    size_--;
+    return  At(--size_);
 }
 
 size_t ArrayPointer<bool>::_size() {

@@ -205,7 +205,7 @@ public:
 //! @return None
 //---------------------------------------
 
-    void pop_back();
+    const T pop_back();
 
 
 };
@@ -389,9 +389,9 @@ void Array<T>::resize(size_t e)
 }
 
 template <typename T>
-void Array<T>::pop_back()
+const T Array<T>::pop_back()
 {
-    pointer_->pop_back();
+    return pointer_->pop_back();
 }
 
 template <typename T>
