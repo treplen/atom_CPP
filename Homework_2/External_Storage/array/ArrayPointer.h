@@ -110,17 +110,29 @@ public:
 //---------------------------------------
 //! @brief Change capacity and size of obj
 //! @throws std::bad_alloc
-//! @param n new capacity of array
-//! @return None
+//! @param n new size of array
 //---------------------------------------
 
     void resize(size_t );
 
 //---------------------------------------
+//! @brief Change capacity of obj
+//! @throws std::bad_alloc
+//! @param n new capacity of array
+//---------------------------------------
+
+    void reserve(size_t );
+
+//---------------------------------------
+//! @brief Change capacity to size of array
+//---------------------------------------
+
+    void shrink_to_fit();
+
+//---------------------------------------
 //! @brief Push the value to array tail
 //! @throws std::bad_alloc
 //! @param elem element pushing to array
-//! @return None
 //---------------------------------------
 
     void push_back(T & );
@@ -128,11 +140,9 @@ public:
 //---------------------------------------
 //! @brief Pop the value from array tail
 //! @throws std::out_of_range
-//! @param elem element pushing to array
-//! @return None
 //---------------------------------------
 
-    const T pop_back();
+    void pop_back();
 
 };
 
@@ -196,10 +206,8 @@ template <typename T>
 T& ArrayPointer<T>::At(const size_t index)
 {
     INFO(*this);
-    if (index < capacity_)
+    if (index < capacity_ && index < size_)
     {
-        if(size_<=index)
-            size_ = index+1;
         return data_[index];
     }
     throw std::out_of_range("bad value");
@@ -273,13 +281,16 @@ size_t ArrayPointer<T>::size() const
 template <typename T>
 void ArrayPointer<T>::resize(size_t n) {
     INFO(*this);
-    T* dat = new T[n];
-    size_ = std::min(n, size_);
-    for (size_t i = 0; i < size_; i++)
-        dat[i] = data_[i];
-    delete[] data_;
-    data_ = dat;
-    capacity_ = n;
+    if(n>capacity_)
+    {
+        T *dat = new T[n];
+        for (size_t i = 0; i < size_; i++)
+            dat[i] = data_[i];
+        delete[] data_;
+        data_ = dat;
+        capacity_ = n;
+    }
+    size_ = n;
     INFO(*this);
 }
 
@@ -292,9 +303,37 @@ void ArrayPointer<T>::push_back(T & elem)
 }
 
 template <typename T>
-const T ArrayPointer<T>::pop_back()
+void ArrayPointer<T>::pop_back()
 {
-    return data_[--size_];
+    if(size_>0)
+        --size_;
+    else
+        throw std::out_of_range("Size is zero");
+}
+
+template <typename T>
+void ArrayPointer<T>::reserve(size_t n)
+{
+    if(n>capacity_)
+    {
+        T *dat = new T[n];
+        for (size_t i = 0; i < size_; i++)
+            dat[i] = data_[i];
+        delete[] data_;
+        data_ = dat;
+        capacity_ = n;
+    }
+}
+
+template <typename T>
+void ArrayPointer<T>::shrink_to_fit()
+{
+    T *dat = new T[size_];
+    for (size_t i = 0; i < size_; i++)
+        dat[i] = data_[i];
+    delete[] data_;
+    data_ = dat;
+    capacity_ = size_;
 }
 
 
