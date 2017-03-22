@@ -291,7 +291,7 @@ void ArrayPointer<bool>::resize(size_t n) {
     INFO(*this);
     capacity_ = n;
     size_ = std::min(capacity_, size_);
-    char* dat = new char[_size()];
+    char* dat = new char[_capacity()];
     for (size_t i = 0; i < _size(); i++)
         dat[i] = data_[i];
     delete[] data_;
