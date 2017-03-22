@@ -167,7 +167,7 @@ size_t ArrayPointer<bool>::_capacity() {
     return (int)ceil(1. * capacity_ / 8);
 }
 
-ArrayPointer<bool>::ArrayPointer(size_t capacity): data_(nullptr), capacity_(capacity),size_(capacity), links_(1), helper_(false), ret_val_(helper_), index_(0)
+ArrayPointer<bool>::ArrayPointer(size_t capacity): data_(nullptr), capacity_(capacity),size_(capacity), links_(1), helper_(false), ret_val_(helper_), index_(-1)
 {
     if (capacity == 0) return;
     try
@@ -182,7 +182,7 @@ ArrayPointer<bool>::ArrayPointer(size_t capacity): data_(nullptr), capacity_(cap
     INFO(*this);
 }
 
-ArrayPointer<bool>::ArrayPointer(ArrayPointer<bool> & array_pointer):capacity_(array_pointer.size_), size_(array_pointer.size_), links_(1), helper_(false), ret_val_(helper_), index_(0)
+ArrayPointer<bool>::ArrayPointer(ArrayPointer<bool> & array_pointer):capacity_(array_pointer.size_), size_(array_pointer.size_), links_(1), helper_(false), ret_val_(helper_), index_(-1)
 {
     array_pointer._upd();
     try
@@ -203,11 +203,14 @@ ArrayPointer<bool>::ArrayPointer(ArrayPointer<bool> & array_pointer):capacity_(a
 void ArrayPointer<bool>::_upd()
 {
     INFO(*this);
-    int i = index_ / 8;
-    int j = index_ % 8;
-    data_ [i] &= ~access[j];
-    if (ret_val_) data_ [i] |=access[j];
-    INFO(*this);
+    if(index_>=0)
+    {
+        int i = index_ / 8;
+        int j = index_ % 8;
+        data_[i] &= ~access[j];
+        if (ret_val_) data_[i] |= access[j];
+        INFO(*this);
+    }
 }
 
 bool& ArrayPointer<bool>::operator[](const size_t index)

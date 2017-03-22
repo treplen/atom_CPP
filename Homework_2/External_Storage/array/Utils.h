@@ -42,7 +42,8 @@ if(!(object).ok())              \
 #endif
 #endif
 
-#define LOG(x) LOG_STREAM<<( x )<<std::endl
+#define LOG(x)
+//LOG_STREAM<<( x )<<std::endl
 
 namespace utils
 {

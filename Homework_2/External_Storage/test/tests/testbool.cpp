@@ -10,8 +10,6 @@ TEST(Array, Constructorbool)
     Array<bool> a(20);
     for (int i=0; i<20; i++)
         a[i] = 1;
-    for (int i=0; i<20; i++)
-        std::cout<<a[i];
     ASSERT_EQ(a[0], 1);
     for (int i=0; i<20; i++)
         a[i] = false;
@@ -107,13 +105,6 @@ TEST(Array,clontestbool)   ///why????????????
         a[i] = 1;
     Array<bool> b;
     b = a.clone();
-    for (int i=0; i<s; i++)
-        std::cout<<a[i];
-    std::cout<<std::endl;
-
-    for (int i=0; i<s; i++)
-        std::cout<<b[i];
-    std::cout<<std::endl;
     for (int i=0; i<20; i++)
         ASSERT_EQ(b[i], a[i]);
     for (int i=0; i<20; i++)
