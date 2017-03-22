@@ -168,23 +168,29 @@ public:
 //---------------------------------------
 //! @brief Decrements the internal pointer by the specified value
 //! @param value A value to decrement the pointer with
-//! @return An reference to the object
+//! @return A reference to the object
 //---------------------------------------
 
     Array<T>& operator-=(int value);
 
-    //---------------------------------------
+//---------------------------------------
 //! @brief Change capacity and size of obj
 //! @throws std::bad_alloc
-//! @param n new capacity of array
-//! @return None
+//! @param n new size of array
 //---------------------------------------
 
     void resize(size_t );
 
 //---------------------------------------
+//! @brief Change capacity of obj
+//! @throws std::bad_alloc
+//! @param n new capacity of array
+//---------------------------------------
+
+    void reserve(size_t );
+
+//---------------------------------------
 //! @brief Change capacity to size of array
-//! @return None
 //---------------------------------------
 
     void shrink_to_fit();
@@ -193,7 +199,6 @@ public:
 //! @brief Push the value to array tail
 //! @throws std::bad_alloc
 //! @param elem element pushing to array
-//! @return None
 //---------------------------------------
 
     void push_back(T & );
@@ -201,8 +206,6 @@ public:
 //---------------------------------------
 //! @brief Pop the value from array tail
 //! @throws std::out_of_range
-//! @param elem element pushing to array
-//! @return None
 //---------------------------------------
 
     const T pop_back();
@@ -397,7 +400,7 @@ const T Array<T>::pop_back()
 template <typename T>
 void Array<T>::shrink_to_fit()
 {
-    resize(size());
+    pointer_->shrink_to_fit();
 }
 
 template <typename T>
@@ -418,6 +421,10 @@ size_t Array<T>::size() const {
     return pointer_->size();
 }
 
+template <typename T>
+void Array<T>::reserve(size_t n) {
+    pointer_->reserve(n);
+}
 
 
 #endif //HOMEWORK_2_ARRAY_H

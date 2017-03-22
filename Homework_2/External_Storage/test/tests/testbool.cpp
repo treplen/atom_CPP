@@ -114,19 +114,16 @@ TEST(Array,clontestbool)   ///why????????????
     for (int i=0; i<s; i++)
         std::cout<<b[i];
     std::cout<<std::endl;
-
-//    for (int i=0; i<20; i++)
-//        std::cout<<b[i];
-//    for (int i=0; i<20; i++)
-//        ASSERT_EQ(b[i], a[i]);
-//    for (int i=0; i<20; i++)
-//        b[i]++;
-//    for (int i=0; i<20; i++)
-//        ASSERT_NE(b[i], a[i]);
-//    for (int i=0; i<20; i++)
-//        a[i]++;
-//    for (int i=0; i<20; i++)
-//        ASSERT_EQ(b[i], a[i]);
+    for (int i=0; i<20; i++)
+        ASSERT_EQ(b[i], a[i]);
+    for (int i=0; i<20; i++)
+        b[i]=!b[i];
+    for (int i=0; i<20; i++)
+        ASSERT_NE(b[i], a[i]);
+    for (int i=0; i<20; i++)
+        a[i]=!a[i];
+    for (int i=0; i<20; i++)
+        ASSERT_EQ(b[i], a[i]);
 }
 
 TEST(Array,clonsizetest2bool)
