@@ -3,8 +3,8 @@
 //! Extra utilities
 //---------------------------------------
 
-#ifndef ARRAY_UTILS_H
-#define ARRAY_UTILS_H
+#ifndef VECTOR_UTILS_H
+#define VECTOR_UTILS_H
 
 #include <cassert>
 #include <iostream>
@@ -48,6 +48,8 @@ if(!(object).ok())              \
 namespace utils
 {
 
+    constexpr int access[8] = {0b00000001, 0b00000010, 0b00000100, 0b00001000, 0b00010000, 0b00100000, 0b01000000, 0b10000000};
+
 //---------------------------------------
 //! @brief Forms a specific padding
 //! @param symbol A character to repeat
@@ -58,4 +60,4 @@ namespace utils
     char* getPadding(char symbol, int amount);
 }
 
-#endif //ARRAY_UTILS_H
+#endif //VECTOR_UTILS_H

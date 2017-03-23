@@ -1,79 +1,79 @@
 //---------------------------------------
-//! @file Array.h
-//! Implementation of the array class
+//! @file VectorBool.h
+//! Specification of the vector class for bool type
 //---------------------------------------
 
-#ifndef HOMEWORK_2_ARRAY_H
-#define HOMEWORK_2_ARRAY_H
+#ifndef HOMEWORK_2_VECTORBOOL_H
+#define HOMEWORK_2_VECTORBOOL_H
 
 #include <cstdint>
 #include <cstring>
 #include <cmath>
-#include "ArrayPointer.h"
-#include "ArrayPointerBool.h"
+#include "VectorPointer.h"
+#include "VectorPointerBool.h"
 #include "Collection.h"
 #include "Iterator.h"
 #include "Utils.h"
 
-template <typename T>
-class Array:Collection<T>
+template <>
+class Vector<bool>:Collection<bool>
 {
 private:
     int current_;
-    ArrayPointer<T> * pointer_;
-    static void swap(Array<T> *one, Array<T> *another);
+    VectorPointer<bool> * pointer_;
+    static void swap(Vector<bool> *one, Vector<bool> *another);
 public:
 
 //---------------------------------------
-//! @brief Returns an iterator to the beginning of the array
-//! @return An iterator to the beginning of the array
+//! @brief Returns an iterator to the beginning of the vector
+//! @return An iterator to the beginning of the vector
 //---------------------------------------
 
-    Iterator<T> begin();
+    Iterator<bool> begin();
 
 //---------------------------------------
-//! @brief Returns an iterator to the end of the array
-//! @return An iterator to the end of the array
+//! @brief Returns an iterator to the end of the vector
+//! @return An iterator to the end of the vector
 //---------------------------------------
 
-    Iterator<T> end();
+    Iterator<bool> end();
 
 //---------------------------------------
 //! @brief Constructor
-//! @param capacity Maximum amount of elements in the array
+//! @param capacity Maximum amount of elements in the vector
 //---------------------------------------
 
-    explicit Array(size_t capacity=0);
+    explicit Vector(size_t capacity=0);
 
 //---------------------------------------
 //! @brief Copy constructor
 //! @param that Object to copy
 //---------------------------------------
 
-    Array(const Array<T>& that);
+    Vector(const Vector<bool>& that);
 
 //---------------------------------------
 //! @brief Destructor
 //---------------------------------------
 
-    ~Array();
+    ~Vector();
 
 //---------------------------------------
-//! @brief Gives access to the requested element from the array
+//! @brief Gives access to the requested element from the vector
 //! @param position Position of the element
 //! @return The requested element
-//! @note This method is unsafe, it's highly suggested to use At() instead
+//! @note This method is unsafe, it's highly suggested to use at() instead
 //---------------------------------------
 
-    T& operator[](size_t position) const;
+    bit_pointer operator[](size_t position) const;
 
 //---------------------------------------
-//! @brief Gives access to the requested element from the array
+//! @brief Gives access to the requested element from the vector
 //! @param position Position of the element
 //! @return The requested element
 //---------------------------------------
 
-    T& At(size_t position) const;
+    bit_pointer at(size_t position) const;
 
 //---------------------------------------
 //! @brief Assigns a value of a variable to the object
@@ -81,14 +81,14 @@ public:
 //! @return The assigned object
 //---------------------------------------
 
-    const Array<T>& operator=(const Array<T>& that);
+    const Vector<bool>& operator=(const Vector<bool>& that);
 
 //---------------------------------------
 //! @brief Clones an object via deep copy
 //! @return Clone of the object
 //---------------------------------------
 
-    Array<T>& clone() const;
+    Vector<bool>& clone() const;
 
 //---------------------------------------
 //! @brief Silent verifier
@@ -125,7 +125,7 @@ public:
 //! @return A value pointed by the internal pointer
 //---------------------------------------
 
-    T& operator*() const;
+    bit_pointer operator*() const;
 
 //---------------------------------------
 //! @brief Increments the internal pointer by the specified value
@@ -133,7 +133,7 @@ public:
 //! @return An object with increased internal pointer
 //---------------------------------------
 
-    Array<T> operator+(int value) const;
+    Vector<bool> operator+(int value) const;
 
 //---------------------------------------
 //! @brief Decrements the internal pointer by the specified value
@@ -141,21 +141,21 @@ public:
 //! @return An object with decreased internal pointer
 //---------------------------------------
 
-    Array<T> operator-(int value) const;
+    Vector<bool> operator-(int value) const;
 
 //---------------------------------------
 //! @brief Increments the internal pointer by one
 //! @return A reference to the object
 //---------------------------------------
 
-    Array<T>& operator++();
+    Vector<bool>& operator++();
 
 //---------------------------------------
 //! @brief Decrements the internal pointer by one
 //! @return A reference to the object
 //---------------------------------------
 
-    Array<T>& operator--();
+    Vector<bool>& operator--();
 
 //---------------------------------------
 //! @brief Increments the internal pointer by the specified value
@@ -163,7 +163,7 @@ public:
 //! @return A reference to the object
 //---------------------------------------
 
-    Array<T>& operator+=(int value);
+    Vector<bool>& operator+=(int value);
 
 //---------------------------------------
 //! @brief Decrements the internal pointer by the specified value
@@ -171,12 +171,12 @@ public:
 //! @return A reference to the object
 //---------------------------------------
 
-    Array<T>& operator-=(int value);
+    Vector<bool>& operator-=(int value);
 
 //---------------------------------------
 //! @brief Change capacity and size of obj
 //! @throws std::bad_alloc
-//! @param n new size of array
+//! @param n new size of vector
 //---------------------------------------
 
     void resize(size_t );
@@ -184,100 +184,91 @@ public:
 //---------------------------------------
 //! @brief Change capacity of obj
 //! @throws std::bad_alloc
-//! @param n new capacity of array
+//! @param n new capacity of vector
 //---------------------------------------
 
     void reserve(size_t );
 
 //---------------------------------------
-//! @brief Change capacity to size of array
+//! @brief Change capacity to size of vector
 //---------------------------------------
 
     void shrink_to_fit();
 
 //---------------------------------------
-//! @brief Push the value to array tail
+//! @brief Push the value to vector tail
 //! @throws std::bad_alloc
-//! @param elem element pushing to array
+//! @param elem element pushing to vector
 //---------------------------------------
 
-    void push_back(T & );
-    void push_back(T && );
+    void push_back(bool & );
+    void push_back(bool && );
 //---------------------------------------
-//! @brief Pop the value from array tail
+//! @brief Pop the value from vector tail
 //! @throws std::out_of_range
 //---------------------------------------
 
-    const T pop_back();
+    void pop_back();
 
 
 };
 
-template <typename T>
-Array<T>::Array(size_t capacity):current_(0), pointer_(new ArrayPointer<T>(capacity))
+Vector<bool>::Vector(size_t capacity):current_(0), pointer_(new VectorPointer<bool>(capacity))
 {
     INFO(*this);
 }
 
-template <typename T>
-Array<T>::Array(const Array<T>& that):current_(that.current_), pointer_(that.pointer_)
+Vector<bool>::Vector(const Vector<bool>& that):current_(that.current_), pointer_(that.pointer_)
 {
     that.pointer_->link();
     INFO(*this);
 }
 
-template <typename T>
-Array<T>::~Array()
+Vector<bool>::~Vector()
 {
     INFO(*this);
     if (pointer_->dislink()) delete pointer_;
 }
 
-template <typename T>
-T& Array<T>::operator[](size_t position) const
+bit_pointer Vector<bool>::operator[](size_t position) const
 {
     INFO(*this);
     return (*pointer_)[position];
 }
 
-template <typename T>
-T& Array<T>::At(size_t position) const
+bit_pointer Vector<bool>::at(size_t position) const
 {
     INFO(*this);
-    return pointer_->At(position);
+    return pointer_->at(position);
 }
 
-template <typename T>
-const Array<T>& Array<T>::operator=(const Array& that)
+const Vector<bool>& Vector<bool>::operator=(const Vector& that)
 {
     INFO(*this);
-    Array swapper(that);
+    Vector swapper(that);
     swap(&swapper, this);
     INFO(*this);
     return *this;
 }
 
-template <typename T>
-Array<T>& Array<T>::clone() const
+Vector<bool>& Vector<bool>::clone() const
 {
     INFO(*this);
-    Array<T> * ret = new Array<T>(0);
-    ret->pointer_ = new ArrayPointer<T>(*this->pointer_);
+    Vector<bool> * ret = new Vector<bool>(0);
+    ret->pointer_ = new VectorPointer<bool>(*this->pointer_);
     return *ret;
 }
 
-template <typename T>
-bool Array<T>::ok() const
+bool Vector<bool>::ok() const
 {
     return pointer_->ok();
 }
 
-template <typename T>
-void Array<T>::dump(std::ostream& out,size_t displacement) const
+void Vector<bool>::dump(std::ostream& out,size_t displacement) const
 {
     char *tabs = utils::getPadding('\t',displacement);
 
-    out<<tabs<<"Array("<<(ok()?"OK":"ERROR")<<") @ "<<(void*)this<<'\n';
+    out<<tabs<<"Vector("<<(ok()?"OK":"ERROR")<<") @ "<<(void*)this<<'\n';
     out<<tabs<<"{\n";
     out<<tabs<<"\tcurrent: "<<current_<<'\n';
     out<<tabs<<"\tpointer:\n";
@@ -287,41 +278,36 @@ void Array<T>::dump(std::ostream& out,size_t displacement) const
     delete [] tabs;
 }
 
-template <typename T>
-size_t Array<T>::capacity() const
+size_t Vector<bool>::capacity() const
 {
     INFO(*this);
     return pointer_->capacity();
 }
 
-template <typename T>
-T& Array<T>::operator*() const
+bit_pointer Vector<bool>::operator*() const
 {
     INFO(*this);
     if (current_ < 0) throw std::out_of_range("minus is not allow");
-    return pointer_->At(current_);
+    return pointer_->at(current_);
 }
 
-template <typename T>
-Array<T> Array<T>::operator+(int value) const
+Vector<bool> Vector<bool>::operator+(int value) const
 {
     INFO(*this);
-    Array<T> ret(*this);
+    Vector<bool> ret(*this);
     ret.current_ += value;
     return ret;
 }
 
-template <typename T>
-Array<T> Array<T>::operator-(int value) const
+Vector<bool> Vector<bool>::operator-(int value) const
 {
     INFO(*this);
-    Array<T> ret(*this);
+    Vector<bool> ret(*this);
     ret.current_ -= value;
     return ret;
 }
 
-template <typename T>
-Array<T>& Array<T>::operator++()
+Vector<bool>& Vector<bool>::operator++()
 {
     INFO(*this);
     INFO(*this);
@@ -330,8 +316,7 @@ Array<T>& Array<T>::operator++()
     return *this;
 }
 
-template <typename T>
-Array<T>& Array<T>::operator--()
+Vector<bool>& Vector<bool>::operator--()
 {
     INFO(*this);
     current_--;
@@ -339,8 +324,7 @@ Array<T>& Array<T>::operator--()
     return *this;
 }
 
-template <typename T>
-Array<T>& Array<T>::operator+=(int value)
+Vector<bool>& Vector<bool>::operator+=(int value)
 {
     INFO(*this);
     current_+=value;
@@ -348,8 +332,7 @@ Array<T>& Array<T>::operator+=(int value)
     return *this;
 }
 
-template <typename T>
-Array<T>& Array<T>::operator-=(int value)
+Vector<bool>& Vector<bool>::operator-=(int value)
 {
     INFO(*this);
     current_-=value;
@@ -357,11 +340,10 @@ Array<T>& Array<T>::operator-=(int value)
     return *this;
 }
 
-template <typename T>
-void Array<T>::swap(Array<T> *one, Array<T> *another)
+void Vector<bool>::swap(Vector<bool> *one, Vector<bool> *another)
 {
 
-    ArrayPointer<T> *pointer = one->pointer_;
+    VectorPointer<bool> *pointer = one->pointer_;
     int current = one->current_;
 
     one->current_ = another->current_;
@@ -371,60 +353,51 @@ void Array<T>::swap(Array<T> *one, Array<T> *another)
     another->pointer_ = pointer;
 }
 
-template <typename T>
-Iterator<T> Array<T>::begin()
+Iterator<bool> Vector<bool>::begin()
 {
     INFO(*this);
-    return Iterator<T>(this,0);
+    return Iterator<bool>(this,0);
 }
 
-template <typename T>
-Iterator<T> Array<T>::end()
+Iterator<bool> Vector<bool>::end()
 {
     INFO(*this);
-    return Iterator<T>(this,capacity());
+    return Iterator<bool>(this,capacity());
 }
 
-template <typename T>
-void Array<T>::resize(size_t e)
+void Vector<bool>::resize(size_t e)
 {
     pointer_->resize(e);
 }
 
-template <typename T>
-const T Array<T>::pop_back()
+void Vector<bool>::pop_back()
 {
-    return pointer_->pop_back();
+    pointer_->pop_back();
 }
 
-template <typename T>
-void Array<T>::shrink_to_fit()
+void Vector<bool>::shrink_to_fit()
 {
     pointer_->shrink_to_fit();
 }
 
-template <typename T>
-void Array<T>::push_back(T & elem)
+void Vector<bool>::push_back(bool & elem)
 {
     pointer_->push_back(elem);
 }
 
-template <typename T>
-void Array<T>::push_back(T && elem)
+void Vector<bool>::push_back(bool && elem)
 {
-    T &val = elem;
+    bool &val = elem;
     pointer_->push_back(val);
 }
 
-template <typename T>
-size_t Array<T>::size() const {
+size_t Vector<bool>::size() const {
     return pointer_->size();
 }
 
-template <typename T>
-void Array<T>::reserve(size_t n) {
+void Vector<bool>::reserve(size_t n) {
     pointer_->reserve(n);
 }
 
 
-#endif //HOMEWORK_2_ARRAY_H
+#endif //HOMEWORK_2_VECTORBOOL_H

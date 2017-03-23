@@ -1,10 +1,10 @@
 //---------------------------------------
-//! @file ArrayPointer.h
+//! @file VectorPointer.h
 //! Implementation of a smart pointer
 //---------------------------------------
 
-#ifndef ARRAY_ARRAYPOINTER_H
-#define ARRAY_ARRAYPOINTER_H
+#ifndef VECTOR_VECTORPOINTER_H
+#define VECTOR_VECTORPOINTER_H
 
 #include <cstring>
 #include <cstdint>
@@ -13,7 +13,7 @@
 #include "Utils.h"
 
 template <typename T>
-class ArrayPointer
+class VectorPointer
 {
 private:
     T * data_;
@@ -61,37 +61,37 @@ public:
 //! @param capacity Maximum amount of elements in the storage
 //---------------------------------------
 
-    explicit ArrayPointer(size_t capacity);
+    explicit VectorPointer(size_t capacity);
 
 //---------------------------------------
 //! @brief Copy constructor
 //! @param that An object to copy
 //---------------------------------------
 
-    ArrayPointer(const ArrayPointer<T>& that);
+    VectorPointer(const VectorPointer<T>& that);
 
 //---------------------------------------
 //! @brief Destructor
 //---------------------------------------
 
-    ~ArrayPointer();
+    ~VectorPointer();
 
 //---------------------------------------
-//! @brief Gives access to the requested element from the array
+//! @brief Gives access to the requested element from the vector
 //! @param position Position of the element
 //! @return The requested element
-//! @note This method is unsafe, it's highly suggested to use At() instead
+//! @note This method is unsafe, it's highly suggested to use at() instead
 //---------------------------------------
 
     T& operator[](const size_t);
 
 //---------------------------------------
-//! @brief Gives access to the requested element from the array
+//! @brief Gives access to the requested element from the vector
 //! @param position Position of the element
 //! @return The requested element
 //---------------------------------------
 
-    T& At(const size_t);
+    T& at(const size_t index);
 
 //---------------------------------------
 //! @brief Returns the capacity of the object
@@ -110,7 +110,7 @@ public:
 //---------------------------------------
 //! @brief Change capacity and size of obj
 //! @throws std::bad_alloc
-//! @param n new size of array
+//! @param n new size of vector
 //---------------------------------------
 
     void resize(size_t );
@@ -118,27 +118,27 @@ public:
 //---------------------------------------
 //! @brief Change capacity of obj
 //! @throws std::bad_alloc
-//! @param n new capacity of array
+//! @param n new capacity of vector
 //---------------------------------------
 
     void reserve(size_t );
 
 //---------------------------------------
-//! @brief Change capacity to size of array
+//! @brief Change capacity to size of vector
 //---------------------------------------
 
     void shrink_to_fit();
 
 //---------------------------------------
-//! @brief Push the value to array tail
+//! @brief Push the value to vector tail
 //! @throws std::bad_alloc
-//! @param elem element pushing to array
+//! @param elem element pushing to vector
 //---------------------------------------
 
     void push_back(T & );
 
 //---------------------------------------
-//! @brief Pop the value from array tail
+//! @brief Pop the value from vector tail
 //! @throws std::out_of_range
 //---------------------------------------
 
@@ -149,7 +149,7 @@ public:
 
 
 template <typename T>
-ArrayPointer<T>::ArrayPointer(size_t capacity):data_(nullptr), capacity_(capacity), size_(capacity), links_(1)
+VectorPointer<T>::VectorPointer(size_t capacity):data_(nullptr), capacity_(capacity), size_(capacity), links_(1)
 {
     if (capacity_ == 0) return;
     try
@@ -166,13 +166,13 @@ ArrayPointer<T>::ArrayPointer(size_t capacity):data_(nullptr), capacity_(capacit
 }
 
 template <typename T>
-ArrayPointer<T>::ArrayPointer(const ArrayPointer<T> & array_pointer):capacity_(array_pointer.size_), size_(array_pointer.size_), links_(1)
+VectorPointer<T>::VectorPointer(const VectorPointer<T> & vector_pointer):capacity_(vector_pointer.size_), size_(vector_pointer.size_), links_(1)
 {
     try
     {
         data_ = new T[capacity_];
         for (size_t i = 0; i < size_; i++)
-            data_[i] = array_pointer.data_[i];
+            data_[i] = vector_pointer.data_[i];
     }
     catch (std::bad_alloc e)
     {
@@ -184,7 +184,7 @@ ArrayPointer<T>::ArrayPointer(const ArrayPointer<T> & array_pointer):capacity_(a
 }
 
 template <typename T>
-ArrayPointer<T>::~ArrayPointer()
+VectorPointer<T>::~VectorPointer()
 {
     INFO(*this);
     delete[] data_;
@@ -196,14 +196,14 @@ ArrayPointer<T>::~ArrayPointer()
 }
 
 template <typename T>
-T& ArrayPointer<T>::operator[](const size_t index)
+T& VectorPointer<T>::operator[](const size_t index)
 {
     INFO(*this);
     return data_[index];
 }
 
 template <typename T>
-T& ArrayPointer<T>::At(const size_t index)
+T& VectorPointer<T>::at(const size_t index)
 {
     INFO(*this);
     if (index < capacity_ && index < size_)
@@ -214,17 +214,17 @@ T& ArrayPointer<T>::At(const size_t index)
 }
 
 template <typename T>
-bool ArrayPointer<T>::ok() const
+bool VectorPointer<T>::ok() const
 {
     return (links_ != POISON) && (capacity_ != POISON) && (size_<=capacity_);
 }
 
 template <typename T>
-void ArrayPointer<T>::dump(std::ostream& out,size_t displacement) const
+void VectorPointer<T>::dump(std::ostream& out,size_t displacement) const
 {
     char *tabs = utils::getPadding('\t',displacement);
 
-    out<<tabs<<"ArrayPointer("<<(ok()?"OK":"ERROR")<<") @ "<<(void*)this<<'\n';
+    out<<tabs<<"VectorPointer("<<(ok()?"OK":"ERROR")<<") @ "<<(void*)this<<'\n';
     out<<tabs<<"{\n";
     out<<tabs<<"\tcapacity: "<<capacity_<<(capacity_==POISON?" (POISON)":"")<<'\n';
     out<<tabs<<"\tsize: "<<size_<<(size_==POISON?" (POISON)":"")<<'\n';
@@ -247,7 +247,7 @@ void ArrayPointer<T>::dump(std::ostream& out,size_t displacement) const
 }
 
 template <typename T>
-void ArrayPointer<T>::link()
+void VectorPointer<T>::link()
 {
     INFO(*this);
     links_++;
@@ -256,7 +256,7 @@ void ArrayPointer<T>::link()
 }
 
 template <typename T>
-bool ArrayPointer<T>::dislink()
+bool VectorPointer<T>::dislink()
 {
     INFO(*this);
     LOG("rem link"+std::to_string(links_-1));
@@ -265,21 +265,21 @@ bool ArrayPointer<T>::dislink()
 }
 
 template <typename T>
-size_t ArrayPointer<T>::capacity() const
+size_t VectorPointer<T>::capacity() const
 {
     INFO(*this);
     return capacity_;
 }
 
 template <typename T>
-size_t ArrayPointer<T>::size() const
+size_t VectorPointer<T>::size() const
 {
     INFO(*this);
     return size_;
 }
 
 template <typename T>
-void ArrayPointer<T>::resize(size_t n) {
+void VectorPointer<T>::resize(size_t n) {
     INFO(*this);
     if(n>capacity_)
     {
@@ -295,15 +295,15 @@ void ArrayPointer<T>::resize(size_t n) {
 }
 
 template <typename T>
-void ArrayPointer<T>::push_back(T & elem)
+void VectorPointer<T>::push_back(T & elem)
 {
     if (size_ == capacity_)
-        resize(capacity_ == 0 ? 1 : capacity_ * 2);
+        reserve(capacity_ == 0 ? 1 : capacity_ * 2);
     data_[size_++] = elem;
 }
 
 template <typename T>
-void ArrayPointer<T>::pop_back()
+void VectorPointer<T>::pop_back()
 {
     if(size_>0)
         --size_;
@@ -312,8 +312,9 @@ void ArrayPointer<T>::pop_back()
 }
 
 template <typename T>
-void ArrayPointer<T>::reserve(size_t n)
+void VectorPointer<T>::reserve(size_t n)
 {
+    INFO (*this);
     if(n>capacity_)
     {
         T *dat = new T[n];
@@ -323,18 +324,22 @@ void ArrayPointer<T>::reserve(size_t n)
         data_ = dat;
         capacity_ = n;
     }
+    INFO (*this);
 }
 
 template <typename T>
-void ArrayPointer<T>::shrink_to_fit()
+void VectorPointer<T>::shrink_to_fit()
 {
-    T *dat = new T[size_];
-    for (size_t i = 0; i < size_; i++)
-        dat[i] = data_[i];
-    delete[] data_;
-    data_ = dat;
-    capacity_ = size_;
+    if(size_<capacity_)
+    {
+        T *dat = new T[size_];
+        for (size_t i = 0; i < size_; i++)
+            dat[i] = data_[i];
+        delete[] data_;
+        data_ = dat;
+        capacity_ = size_;
+    }
 }
 
 
-#endif //ARRAY_ARRAYPOINTER_H
+#endif //VECTOR_VECTORPOINTER_H

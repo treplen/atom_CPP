@@ -3,11 +3,11 @@
 ////
 
 #include "gtest/gtest.h"
-#include <Array.h>
+#include <Vector.h>
 
 TEST(Array, Constructorbool)
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
     for (int i=0; i<20; i++)
         a[i] = 1;
     ASSERT_EQ(a[0], 1);
@@ -19,30 +19,30 @@ TEST(Array, Constructorbool)
 
 TEST(Array, CopyConstructorbool)
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
     for (int i=0; i<20; i++)
         a[i] = 1;
-    Array<bool> b(a);
+    Vector<bool> b(a);
     for (int i=0; i<20; i++)
         ASSERT_EQ(1, b[i]);
 }
 
 TEST(Array,destruktorbool) {
-    Array<bool> *a;
-    a = new Array<bool>(20);
+    Vector<bool> *a;
+    a = new Vector<bool>(20);
     delete a;
     ASSERT_FALSE(a->ok());
 }
 
 TEST(Array, pozition_valuebool)
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
     for (int i=0; i<20; i++)
         a[i] = 0;
     for (int i=0; i<20; i++)
         ASSERT_EQ(0, a[i]);
     for (int i=0; i<10; i++)
-        a[i]++;
+        a[i]=!a[i];
     for (int i=0; i<10; i++)
         ASSERT_EQ(1, a[i]);
     for (int i=10; i<20; i++)
@@ -51,13 +51,14 @@ TEST(Array, pozition_valuebool)
 
 TEST(Array, Atbool)
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
+    a.resize (20);
     for (int i=0; i<20; i++)
-        a.At(i) = 0;
+        a.at(i) = 0;
     for (int i=0; i<20; i++)
         ASSERT_EQ(0, a[i]);
     for (int i=0; i<10; i++)
-        a.At(i) = 1;
+        a.at(i) = 1;
     for (int i=0; i<10; i++)
         ASSERT_EQ(1, a[i]);
     for (int i=10; i<20; i++)
@@ -66,15 +67,16 @@ TEST(Array, Atbool)
 
 TEST(Array,copytestbool)
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
+    a.resize (20);
     for (int i=0; i<20; i++)
-        a.At(i) = 0;
-    Array<bool> b(20);
+        a.at(i) = 0;
+    Vector<bool> b(20);
     b=a;
     for (int i=0; i<20; i++)
         ASSERT_EQ(b[i], a[i]);
     for (int i=0; i<20; i++)
-        b[i]++;
+        b[i]=!b[i];
     for (int i=0; i<20; i++)
         ASSERT_EQ(b[i], a[i]);
     for (int i=0; i<20; i++)
@@ -85,25 +87,26 @@ TEST(Array,copytestbool)
 
 TEST(Array,copysizetestbool)
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
+    a.resize (20);
     for (int i=0; i<20; i++)
-        a.At(i) = 1;
-    Array<bool> b(50);
+        a.at(i) = 1;
+    Vector<bool> b(50);
     b=a;
     ASSERT_EQ(b.capacity(), a.capacity());
-    Array<bool> c(10);
+    Vector<bool> c(10);
     c=a;
     ASSERT_EQ(c.capacity(), a.capacity());
     ASSERT_EQ(b.capacity(), c.capacity());
 }
 
-TEST(Array,clontestbool)   ///why????????????
+TEST(Array,clontestbool)
 {
     int s = 10;
-    Array<bool> a(s);
+    Vector<bool> a(s);
     for (int i=0; i<s; i++)
-        a[i] = 1;
-    Array<bool> b;
+        a.push_back (1);
+    Vector<bool> b;
     b = a.clone();
     for (int i=0; i<20; i++)
         ASSERT_EQ(b[i], a[i]);
@@ -119,13 +122,14 @@ TEST(Array,clontestbool)   ///why????????????
 
 TEST(Array,clonsizetest2bool)
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
+    a.resize (20);
     for (int i=0; i<20; i++)
-        a.At(i) = 1;
-    Array<bool> b(50);
+        a.at(i) = 1;
+    Vector<bool> b(50);
     b=a.clone();
     ASSERT_EQ(b.capacity(), a.capacity());
-    Array<bool> c(10);
+    Vector<bool> c(10);
     c=a.clone();
     ASSERT_EQ(c.capacity(), a.capacity());
     ASSERT_EQ(b.capacity(), c.capacity());
@@ -134,9 +138,10 @@ TEST(Array,clonsizetest2bool)
 
 TEST(Array,oktestbool)
 {
-    Array<bool> *a = new Array<bool>(20);
+    Vector<bool> *a = new Vector<bool>(20);
+    a->resize (20);
     for (int i=0; i<20; i++)
-        a->At(i) = 1;
+        a->at(i) = 1;
     ASSERT_EQ(1, a->ok());
    delete a;
    ASSERT_EQ(0, a->ok());
@@ -144,18 +149,20 @@ TEST(Array,oktestbool)
 
 TEST(Array,capacitytestbool)
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
+    a.resize (20);
     for (int i=0; i<20; i++)
-        a.At(i) = 1;
-    ASSERT_EQ(20,a.capacity());
+        a.push_back (1);
+    ASSERT_EQ(24,a.capacity());
 
 }
 
 TEST(Array, operationsbool) //problem with auto free res
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
+    a.resize (20);
     for (int i=0; i<20; i++)
-        a.At(i) = i % 2;
+        a.at(i) = i % 2;
     ASSERT_EQ(*a, 0);
     ++a;
     ASSERT_EQ(*a, 1);
@@ -172,17 +179,19 @@ TEST(Array, operationsbool) //problem with auto free res
 
 TEST(Array, operations0bool)
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
+    a.resize (20);
     for (int i=0; i<20; i++)
-        a.At(i) = 0;
+        a.at(i) = 0;
     ASSERT_EQ(*a,0);
 }
 
 TEST(Array, operations1bool)
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
+    a.resize (20);
     for (int i=0; i<20; i++)
-        a.At(i) = i % 2;
+        a.at(i) = i % 2;
     ++a;
     ASSERT_EQ(*a, 1);
     --a;
@@ -191,9 +200,10 @@ TEST(Array, operations1bool)
 
 TEST(Array, operations2bool)
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
+    a.resize (20);
     for (int i=0; i<20; i++)
-        a.At(i) = i % 2;
+        a.at(i) = i % 2;
     ASSERT_EQ(*a, 0);
     ASSERT_EQ(0, *(a+8));
     a+=7;
@@ -205,9 +215,10 @@ TEST(Array, operations2bool)
 
 TEST(Array, operations3bool)
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
+    a.resize (20);
     for (int i=0; i<20; i++)
-        a.At(i) = i % 2;
+        a.at(i) = i % 2;
     ASSERT_EQ(*a, 0);
     a+=6;
     ASSERT_EQ(0, *a);
@@ -217,19 +228,21 @@ TEST(Array, operations3bool)
 
 TEST(Array, operations4bool)
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
+    a.resize (20);
     for (int i=0; i<20; i++)
-        a.At(i) = i % 2;
-    a.At(5) = 0;
+        a.at(i) = i % 2;
+    a.at(5) = 0;
     a+=5;
     ASSERT_EQ(0,*a);
 }
 
 TEST(Array,operations5bool)
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
+    a.resize (20);
     for (int i=0; i<20; i++)
-        a.At(i) = i % 2;
+        a.at(i) = i % 2;
     ASSERT_EQ(*a,0);
     ASSERT_ANY_THROW(*(a-1));
     ASSERT_ANY_THROW(*(a+50));
@@ -242,9 +255,10 @@ TEST(Array,operations5bool)
 
 TEST(Array, oversizebool)
 {
-    Array<bool> a(20);
+    Vector<bool> a(20);
+    a.resize (20);
     for (int i=0; i<20; i++)
-        ASSERT_NO_THROW(a.At(i) = 1);
-    ASSERT_ANY_THROW(a.At(21) = 0);
-    ASSERT_ANY_THROW(a.At(-1) = 0);
+        ASSERT_NO_THROW(a[i] = 1);
+    ASSERT_ANY_THROW(a.at(21) = 0);
+    ASSERT_ANY_THROW(a.at(-1) = 0);
 }

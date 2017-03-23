@@ -7,6 +7,8 @@
 #define ARRAY_ITERATOR_H
 
 #include "Collection.h"
+#include "bit_pointer.h"
+#include "Utils.h"
 
 template<typename T>
 class Iterator
@@ -54,7 +56,7 @@ public:
     Iterator<T>& SetEnd()
     {
         INFO(*this);
-        index_ = c_->capacity();
+        index_ = c_->size();
         INFO(*this);
         return *this;
     }
@@ -250,5 +252,147 @@ public:
     }
 
 };
+
+
+template<>
+class Iterator<bool>
+{
+private:
+    Collection<bool> *c_;
+    size_t index_;
+public:
+    Iterator(Collection<bool> *col):c_(col)
+    {
+        INFO(*this);
+    }
+
+    Iterator(Collection<bool>* col, size_t index):c_(col), index_(index)
+    {
+        INFO(*this);
+    }
+
+    Iterator<bool>& SetBegin()
+    {
+        INFO(*this);
+        index_ = 0;
+        INFO(*this);
+        return *this;
+    }
+
+    Iterator<bool>& SetEnd()
+    {
+        INFO(*this);
+        index_ = c_->size();
+        INFO(*this);
+        return *this;
+    }
+
+    bool operator==(const Iterator<bool>& it)const
+    {
+        INFO(*this);
+        return it.index_ == index_ && c_==it.c_;
+    }
+
+    bool operator!=(const Iterator<bool>& it)const
+    {
+        INFO(*this);
+        return it.index_ != index_ || c_!=it.c_;
+    }
+
+
+    bool operator<(const Iterator<bool>& it)const
+    {
+        INFO(*this);
+        return index_ < it.index_ && c_==it.c_;
+    }
+
+    bool operator>(const Iterator<bool>& it)const
+    {
+        INFO(*this);
+        return index_ > it.index_ && c_==it.c_;
+    }
+
+    bool operator<=(const Iterator<bool>& it)const
+    {
+        INFO(*this);
+        return index_ <= it.index_ && c_==it.c_;
+    }
+
+    bool operator>=(const Iterator<bool>& it)const
+    {
+        INFO(*this);
+        return index_ >= it.index_ && c_==it.c_;
+    }
+
+    Iterator<bool>& operator++()
+    {
+        INFO(*this);
+        index_++;
+        INFO(*this);
+        return *this;
+    }
+
+    Iterator<bool>& operator--()
+    {
+        INFO(*this);
+        index_--;
+        INFO(*this);
+        return *this;
+    }
+
+    bit_pointer operator*() const
+    {
+        INFO(*this);
+        return c_->operator[] (index_);
+    }
+
+    Iterator<bool> operator+(int value) const
+    {
+        INFO(*this);
+        return Iterator<bool>(c_, index_+value);
+    }
+
+    Iterator<bool> operator-(int value) const
+    {
+        INFO(*this);
+        return Iterator<bool>(c_, index_-value);
+    }
+
+    Iterator<bool>& operator+=(int value)
+    {
+        INFO(*this);
+        index_+=value;
+        INFO(*this);
+        return *this;
+    }
+
+    Iterator<bool>& operator-=(int value)
+    {
+        INFO(*this);
+        index_-=value;
+        INFO(*this);
+        return *this;
+    }
+
+    bool ok() const
+    {
+        return c_!= nullptr;
+    }
+
+    void dump(std::ostream& out,size_t displacement = 0) const
+    {
+        char* tabs = utils::getPadding('\t',displacement);
+
+        out << tabs << "Iterator(" << (ok() ? "OK" : "ERROR")<<") @ "<<(void*)this<<'\n';
+        out<<tabs<<"{\n";
+        out<<tabs<<"\tData address: "<<(void*)c_<<'\n';
+        out<<tabs<<"\tIndex: "<<index_<<'\n';
+        out<<tabs<<"}\n";
+
+        delete[] tabs;
+    }
+
+};
+
 
 #endif //ARRAY_ITERATOR_H

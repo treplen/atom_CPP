@@ -3,39 +3,39 @@
 //
 
 #include "gtest/gtest.h"
-#include <Array.h>
+#include <Vector.h>
 
-TEST(Array, Constructor)
+TEST(Vector, Constructor)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
     a[i] = i;
     for (int i=0; i<20; i++)
         ASSERT_EQ(i, a[i]);
 }
 
-TEST(Array, CopyConstructor)
+TEST(Vector, CopyConstructor)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
         a[i] = i;
-    Array<int> b(a);
+    Vector<int> b(a);
     for (int i=0; i<20; i++)
         ASSERT_EQ(i, b[i]);
 }
 
-TEST(Array,destruktor)
+TEST(Vector,destruktor)
 {
-    Array<int> * a;
-    a = new Array<int>(20);
+    Vector<int> * a;
+    a = new Vector<int>(20);
     delete a;
     ASSERT_FALSE(a->ok());
 
 }
 
-TEST(Array, pozition_value)
+TEST(Vector, pozition_value)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
         a[i] = i;
     for (int i=0; i<20; i++)
@@ -48,27 +48,27 @@ TEST(Array, pozition_value)
         ASSERT_EQ(i, a[i]);
 }
 
-TEST(Array, At)
+TEST(Vector, at)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
-        a.At(i) = i;
+        a.at(i) = i;
     for (int i=0; i<20; i++)
         ASSERT_EQ(i, a[i]);
     for (int i=0; i<10; i++)
-        a.At(i) = i+1;
+        a.at(i) = i+1;
     for (int i=0; i<10; i++)
         ASSERT_EQ(i+1, a[i]);
     for (int i=10; i<20; i++)
         ASSERT_EQ(i, a[i]);
 }
 
-TEST(Array,copytest)
+TEST(Vector,copytest)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
-        a.At(i) = i;
-    Array<int> b(20);
+        a.at(i) = i;
+    Vector<int> b(20);
     b=a;
     for (int i=0; i<20; i++)
         ASSERT_EQ(b[i], a[i]);
@@ -82,27 +82,27 @@ TEST(Array,copytest)
         ASSERT_EQ(b[i], a[i]);
 }
 
-TEST(Array,copysizetest)
+TEST(Vector,copysizetest)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
-        a.At(i) = i;
-    Array<int> b(50);
+        a.at(i) = i;
+    Vector<int> b(50);
     b=a;
         ASSERT_EQ(b.capacity(), a.capacity());
-    Array<int> c(10);
+    Vector<int> c(10);
     c=a;
     ASSERT_EQ(c.capacity(), a.capacity());
     ASSERT_EQ(b.capacity(), c.capacity());
 }
 
 
-TEST(Array,clontest)
+TEST(Vector,clontest)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
-        a.At(i) = i;
-    Array<int> b(20);
+        a.at(i) = i;
+    Vector<int> b(20);
     b=a.clone();
     for (int i=0; i<20; i++)
         ASSERT_EQ(b[i], a[i]);
@@ -116,45 +116,45 @@ TEST(Array,clontest)
         ASSERT_EQ(b[i], a[i]);
 }
 
-TEST(Array,clonsizetest2)
+TEST(Vector,clonsizetest2)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
-        a.At(i) = i;
-    Array<int> b(50);
+        a.at(i) = i;
+    Vector<int> b(50);
     b=a.clone();
     ASSERT_EQ(b.capacity(), a.capacity());
-    Array<int> c(10);
+    Vector<int> c(10);
     c=a.clone();
     ASSERT_EQ(c.capacity(), a.capacity());
     ASSERT_EQ(b.capacity(), c.capacity());
 }
 
 
-TEST(Array,oktest)
+TEST(Vector,oktest)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
-        a.At(i) = i;
+        a.at(i) = i;
     ASSERT_EQ(1, a.ok());
     //delete a;
     //ASSERT_EQ(0, a.ok());
 }
 
-TEST(Array,capacitytest)
+TEST(Vector,capacitytest)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
-        a.At(i) = i;
+        a.at(i) = i;
     ASSERT_EQ(20,a.capacity());
 
 }
 
-TEST(Array, operations) //problem with auto free res
+TEST(Vector, operations) //problem with auto free res
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
-        a.At(i) = i;
+        a.at(i) = i;
     ASSERT_EQ(*a,0);
     ++a;
     ASSERT_EQ(*a, 1);
@@ -169,30 +169,30 @@ TEST(Array, operations) //problem with auto free res
     ASSERT_EQ(1, *(a-6));
 }
 
-TEST(Array, operations0)
+TEST(Vector, operations0)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
-        a.At(i) = i;
+        a.at(i) = i;
     ASSERT_EQ(*a,0);
 }
 
-TEST(Array, operations1)
+TEST(Vector, operations1)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
-        a.At(i) = i;
+        a.at(i) = i;
     ++a;
     ASSERT_EQ(*a, 1);
     --a;
     ASSERT_EQ(*a, 0);
 }
 
-TEST(Array, operations2)
+TEST(Vector, operations2)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
-        a.At(i) = i;
+        a.at(i) = i;
     ASSERT_EQ(*a,0);
     ASSERT_EQ(8, *(a+8));
     a+=7;
@@ -202,11 +202,11 @@ TEST(Array, operations2)
     ASSERT_EQ(0, *(a+1));
 }
 
-TEST(Array, operations3)
+TEST(Vector, operations3)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
-        a.At(i) = i;
+        a.at(i) = i;
     ASSERT_EQ(*a,0);
     a+=6;
     ASSERT_EQ(6,*a);
@@ -214,21 +214,21 @@ TEST(Array, operations3)
     ASSERT_EQ(0,*a);
 }
 
-TEST(Array, operations4)
+TEST(Vector, operations4)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
-        a.At(i) = i;
-    a.At(5) = 10;
+        a.at(i) = i;
+    a.at(5) = 10;
     a+=5;
     ASSERT_EQ(10,*a);
 }
 
-TEST(Array,operations5)
+TEST(Vector,operations5)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
-        a.At(i) = i;
+        a.at(i) = i;
     ASSERT_EQ(*a,0);
     ASSERT_ANY_THROW(*(a-1));
     ASSERT_ANY_THROW(*(a+50));
@@ -239,11 +239,11 @@ TEST(Array,operations5)
 
 }
 
-TEST(Array, oversize)
+TEST(Vector, oversize)
 {
-    Array<int> a(20);
+    Vector<int> a(20);
     for (int i=0; i<20; i++)
-        ASSERT_NO_THROW(a.At(i) = i);
-    ASSERT_ANY_THROW(a.At(21)=21);
-    ASSERT_ANY_THROW(a.At(-1)=21);
+        ASSERT_NO_THROW(a.at(i) = i);
+    ASSERT_ANY_THROW(a.at(21)=21);
+    ASSERT_ANY_THROW(a.at(-1)=21);
 }
