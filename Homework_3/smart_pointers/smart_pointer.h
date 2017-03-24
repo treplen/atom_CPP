@@ -18,8 +18,9 @@ public:
     virtual operator bool() const = 0;
     virtual T* release() = 0;
     virtual void reset(T*) = 0;
-    virtual bool ok() = 0;
-    virtual void dump(utils::ostream&)=0;
+    virtual bool ok() const = 0;
+    virtual void dump(utils::ostream&)const =0;
+    virtual void dump(utils::ostream&&)const =0;
 };
 
 #endif //HOMEWORK_3_SMART_POINTER_H

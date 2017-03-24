@@ -17,8 +17,9 @@ class shared_ptr: public smart_pointer<T>
         void link();
         bool dislink();
         bool linked();
-        virtual bool ok();
-        virtual void dump(utils::ostream&);
+        virtual bool ok() const;
+        virtual void dump(utils::ostream&) const;
+        virtual void dump(utils::ostream&&) const;
         proxy_ptr(T* ptr = nullptr);
         virtual ~proxy_ptr ();
     };
@@ -48,38 +49,46 @@ public:
 
     virtual void reset (T *t);
 
-    virtual bool ok ();
+    virtual bool ok () const;
 
-    virtual void dump (utils::ostream &ostream);
+    virtual void dump (utils::ostream &ostream) const;
+
+    virtual void dump (utils::ostream &&ostream) const;
 
 };
 
 template <typename T>
 void shared_ptr<T>::proxy_ptr::link ()
 {
+    INFO(*this);
     links++;
+    INFO(*this);
 }
 
 template <typename T>
 bool shared_ptr<T>::proxy_ptr::dislink ()
 {
-    return (--links)==0;
+    INFO(*this);
+    --links;
+    INFO(*this);
+    return links==0;
 }
 
 template <typename T>
 bool shared_ptr<T>::proxy_ptr::linked ()
 {
+    INFO(*this);
     return links>0;
 }
 
 template <typename T>
-bool shared_ptr<T>::proxy_ptr::ok ()
+bool shared_ptr<T>::proxy_ptr::ok () const
 {
     return unique_ptr<T>::ok () && links!=utils::POISON_INT;
 }
 
 template <typename T>
-void shared_ptr<T>::proxy_ptr::dump (utils::ostream & ostream)
+void shared_ptr<T>::proxy_ptr::dump (utils::ostream & ostream) const
 {
     ostream.println ("proxy_ptr (",ok()?"OK":"ERROR",") @ ",this);
     ostream.println ('{');
@@ -91,8 +100,15 @@ void shared_ptr<T>::proxy_ptr::dump (utils::ostream & ostream)
 }
 
 template <typename T>
+void shared_ptr<T>::proxy_ptr::dump (utils::ostream && ostream) const
+{
+    dump (ostream);
+}
+
+template <typename T>
 shared_ptr<T>::proxy_ptr::proxy_ptr (T *ptr) : unique_ptr<T> (ptr),links(1)
 {
+    INFO(*this);
 }
 
 template <typename T>
@@ -104,6 +120,7 @@ shared_ptr<T>::proxy_ptr::~proxy_ptr ()
 template <typename T>
 T *shared_ptr<T>::get () const
 {
+    INFO(*this);
     if(pointer_!= nullptr)
         return pointer_->get ();
     return nullptr;
@@ -112,6 +129,7 @@ T *shared_ptr<T>::get () const
 template <typename T>
 T &shared_ptr<T>::operator* () const
 {
+    INFO(*this);
     if(pointer_!= nullptr)
         return pointer_->operator* ();
     throw "Pointer is empty";
@@ -120,6 +138,7 @@ T &shared_ptr<T>::operator* () const
 template <typename T>
 T *shared_ptr<T>::operator-> () const
 {
+    INFO(*this);
     if(pointer_!= nullptr)
         return pointer_->operator-> ();
     return nullptr;
@@ -128,15 +147,18 @@ T *shared_ptr<T>::operator-> () const
 template <typename T>
 T *shared_ptr<T>::operator= (T *t)
 {
+    INFO(*this);
     if(pointer_== nullptr)
         pointer_=new proxy_ptr();
     pointer_->reset (t);
+    INFO(*this);
     return t;
 }
 
 template <typename T>
 shared_ptr<T>::operator bool () const
 {
+    INFO(*this);
     if(pointer_!= nullptr)
         return (bool)pointer_;
     return false;
@@ -145,23 +167,27 @@ shared_ptr<T>::operator bool () const
 template <typename T>
 T *shared_ptr<T>::release ()
 {
+    INFO(*this);
     if(pointer_== nullptr)
         return nullptr;
     T* ret = pointer_->get ();
     if(pointer_->dislink ()) delete pointer_;
     pointer_=nullptr;
+    INFO(*this);
     return ret;
 }
 
 template <typename T>
 void shared_ptr<T>::reset (T *t)
 {
-    if(pointer_->dislink ()) delete pointer_;
+    INFO(*this);
+    if(pointer_!= nullptr && pointer_->dislink ()) delete pointer_;
     pointer_=new proxy_ptr(t);
+    INFO(*this);
 }
 
 template <typename T>
-bool shared_ptr<T>::ok ()
+bool shared_ptr<T>::ok () const
 {
     if(pointer_==utils::POISON_PTR)
         return false;
@@ -169,7 +195,7 @@ bool shared_ptr<T>::ok ()
 }
 
 template <typename T>
-void shared_ptr<T>::dump (utils::ostream &ostream)
+void shared_ptr<T>::dump (utils::ostream &ostream) const
 {
     ostream.println ("shared_ptr (",ok()?"OK":"ERROR",") @ ",this);
     ostream.println ('{');
@@ -179,6 +205,12 @@ void shared_ptr<T>::dump (utils::ostream &ostream)
         pointer_->dump (ostream);
     --ostream;
     ostream.println ('}');
+}
+
+template <typename T>
+void shared_ptr<T>::dump (utils::ostream &&ostream) const
+{
+    dump (ostream);
 }
 
 template <typename T>
@@ -192,6 +224,7 @@ shared_ptr<T>::shared_ptr (T *t):pointer_(nullptr)
     {
         pointer_= nullptr;
     }
+    INFO(*this);
 }
 
 template <typename T>
@@ -200,15 +233,18 @@ shared_ptr<T>::shared_ptr (const shared_ptr &that)
     pointer_=that.pointer_;
     if(pointer_!= nullptr)
         pointer_->link ();
+    INFO(*this);
 }
 
 template <typename T>
 const shared_ptr<T> &shared_ptr<T>::operator= (const shared_ptr &that)
 {
+    INFO(*this);
     release ();
     pointer_=that.pointer_;
     if(pointer_!= nullptr)
         pointer_->link ();
+    INFO(*this);
     return *this;
 }
 

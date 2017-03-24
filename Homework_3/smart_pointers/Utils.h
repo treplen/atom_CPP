@@ -5,7 +5,41 @@
 #ifndef HOMEWORK_3_UTILS_H
 #define HOMEWORK_3_UTILS_H
 
-#include <ostream>
+#include <iostream>
+#include <cassert>
+
+#define ERROR_LOG
+
+#define ERROR_STREAM utils::ostream(std::cerr)
+#define LOG_STREAM utils::ostream(std::cout)
+
+#ifdef FULL_LOG
+
+#define INFO( object )          \
+if(!(object).ok())              \
+{                               \
+    (object).dump(ERROR_STREAM);\
+    assert(!"Object is OK");    \
+}                               \
+else                            \
+{                               \
+    (object).dump(LOG_STREAM);  \
+}
+
+#else
+#ifdef ERROR_LOG
+
+#define INFO( object )          \
+if(!(object).ok())              \
+{                               \
+    (object).dump(ERROR_STREAM);\
+    assert(!"Object is ok");    \
+}
+
+#else
+#define INFO( object )
+#endif
+#endif
 
 namespace utils
 {

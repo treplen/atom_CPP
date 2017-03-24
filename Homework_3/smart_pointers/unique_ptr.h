@@ -35,20 +35,24 @@ public:
 
     virtual void reset (T *t);
 
-    virtual bool ok ();
+    virtual bool ok () const;
 
-    virtual void dump (utils::ostream &ostream);
+    virtual void dump (utils::ostream &ostream) const ;
+
+    virtual void dump (utils::ostream &&ostream) const ;
 };
 
 template <typename T>
 T *unique_ptr<T>::get () const
 {
+    INFO(*this);
     return pointer_;
 }
 
 template <typename T>
 T &unique_ptr<T>::operator* () const
 {
+    INFO(*this);
     if(pointer_!= nullptr)
         return *pointer_;
     throw "Pointer is empty";
@@ -57,46 +61,54 @@ T &unique_ptr<T>::operator* () const
 template <typename T>
 T *unique_ptr<T>::operator-> () const
 {
+    INFO(*this);
     return pointer_;
 }
 
 template <typename T>
 T *unique_ptr<T>::operator= (T *t)
 {
+    INFO(*this);
     delete pointer_;
     pointer_=t;
+    INFO(*this);
     return pointer_;
 }
 
 template <typename T>
 unique_ptr<T>::operator bool () const
 {
+    INFO(*this);
     return pointer_!= nullptr;
 }
 
 template <typename T>
 T *unique_ptr<T>::release ()
 {
+    INFO(*this);
     T* ret = pointer_;
     pointer_= nullptr;
+    INFO(*this);
     return ret;
 }
 
 template <typename T>
 void unique_ptr<T>::reset (T *t)
 {
+    INFO(*this);
     delete pointer_;
     pointer_ = t;
+    INFO(*this);
 }
 
 template <typename T>
-bool unique_ptr<T>::ok ()
+bool unique_ptr<T>::ok () const
 {
     return pointer_!=(void*)utils::POISON_PTR;
 }
 
 template <typename T>
-void unique_ptr<T>::dump (utils::ostream &ostream)
+void unique_ptr<T>::dump (utils::ostream &ostream) const
 {
     ostream.println ("unique_ptr (",ok()?"OK":"ERROR",") @ ",this);
     ostream.println ('{');
@@ -107,8 +119,15 @@ void unique_ptr<T>::dump (utils::ostream &ostream)
 }
 
 template <typename T>
+void unique_ptr<T>::dump (utils::ostream &&ostream) const
+{
+    dump (ostream);
+}
+
+template <typename T>
 unique_ptr<T>::unique_ptr (T *pointer):pointer_(pointer)
 {
+    INFO(*this);
 }
 
 template <typename T>
