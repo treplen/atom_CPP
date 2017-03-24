@@ -18,9 +18,6 @@ public:
     operator bool() const;
     const bool& operator = (const bool& value);
     const bit_pointer& operator = (const bit_pointer& that);
-    bool operator ! ();
-    bool operator==(const bit_pointer&)= delete;
-    bool operator!=(const bit_pointer&)= delete;
 };
 
 bit_pointer::bit_pointer (char *byte_pointer, size_t index): byte_pointer_(byte_pointer), index_(index)
@@ -47,10 +44,4 @@ bit_pointer::operator bool() const
 {
     return (bool) (*byte_pointer_ & utils::access[index_]);
 }
-
-bool bit_pointer::operator! ()
-{
-    return !operator bool() ;
-}
-
 #endif //VECTOR_BIT_POINTER_H
