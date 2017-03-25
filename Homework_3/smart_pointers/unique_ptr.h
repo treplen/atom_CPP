@@ -17,6 +17,8 @@ public:
 
     unique_ptr(const unique_ptr&)= delete;
 
+    unique_ptr(const unique_ptr&&);
+
     virtual ~unique_ptr ();
 
     T *get () const;
@@ -29,6 +31,8 @@ public:
 
     const unique_ptr&operator=(const unique_ptr&)= delete;
 
+    const unique_ptr&operator=(unique_ptr&&);
+
     operator bool () const;
 
     virtual T *release ();
@@ -40,6 +44,8 @@ public:
     virtual void dump (utils::ostream &ostream) const ;
 
     virtual void dump (utils::ostream &&ostream) const ;
+
+    virtual void swap (unique_ptr &);
 };
 
 template <typename T>
@@ -133,8 +139,35 @@ unique_ptr<T>::unique_ptr (T *pointer):pointer_(pointer)
 template <typename T>
 unique_ptr<T>::~unique_ptr ()
 {
+    INFO(*this);
     delete pointer_;
     pointer_=(int*)utils::POISON_PTR;
+}
+
+template <typename T>
+unique_ptr<T>::unique_ptr (const unique_ptr<T> && that):pointer_(that.pointer_)
+{
+    INFO(*this);
+}
+
+template <typename T>
+const unique_ptr<T> &unique_ptr<T>::operator= (unique_ptr<T> && that)
+{
+    INFO(*this);
+    swap (that);
+    INFO(*this);
+    return *this;
+}
+
+template <typename T>
+void unique_ptr<T>::swap (unique_ptr<T> & that)
+{
+    INFO(*this);
+    T* buf;
+    buf=pointer_;
+    pointer_=that.pointer_;
+    that.pointer_=buf;
+    INFO(*this);
 }
 
 #endif //HOMEWORK_3_UNIQUE_PTR_H

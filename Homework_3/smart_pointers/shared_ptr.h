@@ -43,6 +43,8 @@ public:
 
     const shared_ptr&operator=(const shared_ptr& that);
 
+    const shared_ptr&operator=(shared_ptr&& that);
+
     virtual operator bool () const;
 
     virtual T *release ();
@@ -55,6 +57,7 @@ public:
 
     virtual void dump (utils::ostream &&ostream) const;
 
+    virtual void swap (shared_ptr& that);
 };
 
 template <typename T>
@@ -114,6 +117,7 @@ shared_ptr<T>::proxy_ptr::proxy_ptr (T *ptr) : unique_ptr<T> (ptr),links(1)
 template <typename T>
 shared_ptr<T>::proxy_ptr::~proxy_ptr ()
 {
+    INFO(*this);
     links=utils::POISON_INT;
 }
 
@@ -216,14 +220,17 @@ void shared_ptr<T>::dump (utils::ostream &&ostream) const
 template <typename T>
 shared_ptr<T>::shared_ptr (T *t):pointer_(nullptr)
 {
-    try
-    {
-        pointer_=new proxy_ptr(t);
-    }
-    catch (std::bad_alloc)
-    {
+    if(t== nullptr)
         pointer_= nullptr;
-    }
+    else
+        try
+        {
+            pointer_=new proxy_ptr(t);
+        }
+        catch (std::bad_alloc)
+        {
+            pointer_= nullptr;
+        }
     INFO(*this);
 }
 
@@ -240,10 +247,8 @@ template <typename T>
 const shared_ptr<T> &shared_ptr<T>::operator= (const shared_ptr &that)
 {
     INFO(*this);
-    release ();
-    pointer_=that.pointer_;
-    if(pointer_!= nullptr)
-        pointer_->link ();
+    shared_ptr<T> buf(that);
+    swap (buf);
     INFO(*this);
     return *this;
 }
@@ -251,8 +256,29 @@ const shared_ptr<T> &shared_ptr<T>::operator= (const shared_ptr &that)
 template <typename T>
 shared_ptr<T>::~shared_ptr ()
 {
+    INFO(*this);
     release ();
+    INFO(*this);
     pointer_=(proxy_ptr*)utils::POISON_PTR;
+}
+
+template <typename T>
+const shared_ptr<T> &shared_ptr<T>::operator= (shared_ptr<T> &&that)
+{
+    INFO (*this);
+    swap(that);
+    INFO (*this);
+    return *this;
+}
+
+template <typename T>
+void shared_ptr<T>::swap (shared_ptr<T> &that)
+{
+    INFO(*this);
+    proxy_ptr* buf = pointer_;
+    pointer_=that.pointer_;
+    that.pointer_=buf;
+    INFO(*this);
 }
 
 #endif //HOMEWORK_3_SHARED_PTR_H

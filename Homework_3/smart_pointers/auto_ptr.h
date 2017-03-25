@@ -15,6 +15,7 @@ public:
     auto_ptr(auto_ptr& that);
     auto_ptr(auto_ptr&& that);
     auto_ptr&operator=(auto_ptr& that);
+    auto_ptr&operator=(auto_ptr&& that);
     virtual void dump(utils::ostream& out) const;
     virtual void dump(utils::ostream&& out) const;
 };
@@ -41,7 +42,16 @@ template <typename T>
 auto_ptr<T> &auto_ptr<T>::operator= (auto_ptr &that)
 {
     INFO(*this);
-    this->reset (that.release ());
+    this->swap (that);
+    INFO(*this);
+    return *this;
+}
+
+template <typename T>
+auto_ptr<T> &auto_ptr<T>::operator= (auto_ptr &&that)
+{
+    INFO(*this);
+    this->swap(that);
     INFO(*this);
     return *this;
 }

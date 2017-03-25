@@ -8,32 +8,35 @@
 #include <iostream>
 #include <cassert>
 
-#define ERROR_LOG
+#define FULL_LOG
 
 #define ERROR_STREAM utils::ostream(std::cerr)
 #define LOG_STREAM utils::ostream(std::cout)
 
 #ifdef FULL_LOG
 
-#define INFO( object )          \
-if(!(object).ok())              \
-{                               \
-    (object).dump(ERROR_STREAM);\
-    assert(!"Object is OK");    \
-}                               \
-else                            \
-{                               \
-    (object).dump(LOG_STREAM);  \
+#define INFO( object )                                      \
+if(!(object).ok())                                          \
+{                                                           \
+    ERROR_STREAM.println("In ",__PRETTY_FUNCTION__," :");   \
+    (object).dump(ERROR_STREAM);                            \
+    assert(!"Object is OK");                                \
+}                                                           \
+else                                                        \
+{                                                           \
+    LOG_STREAM.println("In ",__PRETTY_FUNCTION__," :");     \
+    (object).dump(LOG_STREAM);                              \
 }
 
 #else
 #ifdef ERROR_LOG
 
-#define INFO( object )          \
-if(!(object).ok())              \
-{                               \
-    (object).dump(ERROR_STREAM);\
-    assert(!"Object is ok");    \
+#define INFO( object )                                      \
+if(!(object).ok())                                          \
+{                                                           \
+    ERROR_STREAM.println("In ",__PRETTY_FUNCTION__," :");   \
+    (object).dump(ERROR_STREAM);                            \
+    assert(!"Object is ok");                                \
 }
 
 #else
