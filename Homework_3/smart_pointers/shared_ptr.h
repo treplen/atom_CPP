@@ -26,13 +26,13 @@ class shared_ptr : public smart_pointer<T>
     public:
 
 //---------------------------------------
-//! @brief Increments the anount of links by one
+//! @brief Increments the amount of links by one
 //---------------------------------------
 
         void link ();
 
 //---------------------------------------
-//! @brief Decrements the anount of links by one
+//! @brief Decrements the amount of links by one
 //! @returns true if there are no more links
 //---------------------------------------
 
@@ -308,9 +308,7 @@ template<typename T>
 shared_ptr<T>::operator bool () const
 {
     INFO(*this);
-    if (pointer_ != nullptr)
-        return (bool) pointer_;
-    return false;
+    return pointer_ != nullptr && (bool) pointer_;
 }
 
 template<typename T>
@@ -341,9 +339,7 @@ void shared_ptr<T>::reset (T *t)
 template<typename T>
 bool shared_ptr<T>::ok () const
 {
-    if (pointer_ == utils::POISON_PTR)
-        return false;
-    return pointer_ == nullptr || pointer_->ok ();
+    return pointer_ != utils::POISON_PTR && (pointer_ == nullptr || pointer_->ok ());
 }
 
 template<typename T>
