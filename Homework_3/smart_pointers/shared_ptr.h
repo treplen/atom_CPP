@@ -168,7 +168,7 @@ public:
 //! @returns Copied stored pointer
 //---------------------------------------
 
-    virtual void reset (T *t);
+    virtual void reset (T *t = nullptr);
 
 //---------------------------------------
 //! @brief Silent verifier
@@ -291,9 +291,15 @@ template<typename T>
 T *shared_ptr<T>::operator= (T *t)
 {
     INFO(*this);
-    if (pointer_ == nullptr)
-        pointer_ = new proxy_ptr ();
-    pointer_->reset (t);
+    if (t != nullptr) {
+        if (pointer_ == nullptr)
+            pointer_ = new proxy_ptr (t);
+        else
+            pointer_->reset (t);
+    } else {
+        delete pointer_;
+        pointer_ = nullptr;
+    }
     INFO(*this);
     return t;
 }
@@ -314,7 +320,10 @@ T *shared_ptr<T>::release ()
     if (pointer_ == nullptr)
         return nullptr;
     T *ret = pointer_->get ();
-    if (pointer_->dislink ()) delete pointer_;
+    if (pointer_->dislink ()) {
+        pointer_->release ();
+        delete pointer_;
+    }
     pointer_ = nullptr;
     INFO(*this);
     return ret;
@@ -395,7 +404,7 @@ template<typename T>
 shared_ptr<T>::~shared_ptr ()
 {
     INFO(*this);
-    release ();
+    reset ();
     INFO(*this);
     pointer_ = (proxy_ptr *) utils::POISON_PTR;
 }

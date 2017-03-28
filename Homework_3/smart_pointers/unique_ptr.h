@@ -109,7 +109,7 @@ public:
 //---------------------------------------
 
 
-    virtual void reset (T *t);
+    virtual void reset (T *t = nullptr);
 
 //---------------------------------------
 //! @brief Silent verifier
@@ -202,7 +202,7 @@ void unique_ptr<T>::reset (T *t)
 template<typename T>
 bool unique_ptr<T>::ok () const
 {
-    return pointer_ != (void *) utils::POISON_PTR;
+    return pointer_ != (T *) utils::POISON_PTR;
 }
 
 template<typename T>
@@ -233,7 +233,7 @@ unique_ptr<T>::~unique_ptr ()
 {
     INFO(*this);
     delete pointer_;
-    pointer_ = (int *) utils::POISON_PTR;
+    pointer_ = (T *) utils::POISON_PTR;
 }
 
 template<typename T>

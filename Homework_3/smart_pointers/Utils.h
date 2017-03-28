@@ -9,7 +9,7 @@
 #include <iostream>
 #include <cassert>
 
-#define FULL_LOG
+#define ERROR_LOG
 
 //---------------------------------------
 //! @brief A stream that is used to log errors
@@ -45,7 +45,7 @@ else                                                        \
 #else
 #ifdef ERROR_LOG
 
-#define INFO( object )                                      \
+#define INFO(object)                                      \
 if(!(object).ok())                                          \
 {                                                           \
     ERROR_STREAM.println("In ",__PRETTY_FUNCTION__," :");   \
