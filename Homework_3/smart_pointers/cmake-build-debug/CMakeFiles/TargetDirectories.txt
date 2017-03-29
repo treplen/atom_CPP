@@ -1,0 +1,3 @@
+/home/svuatoslav/CLionProjects/atom_CPP/Homework_3/smart_pointers/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/svuatoslav/CLionProjects/atom_CPP/Homework_3/smart_pointers/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/svuatoslav/CLionProjects/atom_CPP/Homework_3/smart_pointers/cmake-build-debug/CMakeFiles/Homework_3.dir

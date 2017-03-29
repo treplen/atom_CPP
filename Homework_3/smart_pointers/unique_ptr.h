@@ -255,8 +255,7 @@ template<typename T>
 void unique_ptr<T>::swap (unique_ptr<T> &that)
 {
     INFO(*this);
-    T *buf;
-    buf = pointer_;
+    T *buf = pointer_;
     pointer_ = that.pointer_;
     that.pointer_ = buf;
     INFO(*this);
