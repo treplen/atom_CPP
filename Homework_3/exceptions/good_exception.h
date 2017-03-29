@@ -12,14 +12,13 @@
 
 class good_exception: public std::exception
 {
-    int errcode_;
-    std::string what_;
-    std::string where_;
-    static char ret_buffer[RETBUFLEN];
+    char* what_;
 public:
-    good_exception(int errcode,const char* what,const char* where);
+    good_exception(int errcode,const char* what,const char* where, good_exception* why=nullptr);
 
     virtual const char *what () const noexcept ;
+
+    ~good_exception ();
 };
 
 

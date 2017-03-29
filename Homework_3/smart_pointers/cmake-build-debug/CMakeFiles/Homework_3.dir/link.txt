@@ -1,1 +1,0 @@
-/usr/bin/c++   -g   CMakeFiles/Homework_3.dir/tests.cpp.o  -o Homework_3 -lgtest 

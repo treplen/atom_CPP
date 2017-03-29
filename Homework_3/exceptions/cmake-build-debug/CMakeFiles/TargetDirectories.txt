@@ -1,3 +1,0 @@
-/home/svuatoslav/CLionProjects/atom_CPP/Homework_3/exceptions/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/svuatoslav/CLionProjects/atom_CPP/Homework_3/exceptions/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/svuatoslav/CLionProjects/atom_CPP/Homework_3/exceptions/cmake-build-debug/CMakeFiles/exceptions.dir
