@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.6)
 project(Interpreter)
 
 set(CMAKE_CXX_STANDARD 11)
-
-set(SOURCE_FILES main.cpp VCPU.cpp VCPU.h)
+set(SOURCE_FILES main.cpp)
+add_subdirectory(VCPU)
+link_libraries(vcpu)
+add_subdirectory(utils)
+link_libraries(utils)
 add_executable(Interpreter ${SOURCE_FILES})

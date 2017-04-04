@@ -1,7 +1,7 @@
 #include <iostream>
-#include "VCPU.h"
+#include "VCPU/VCPU.h"
 
-int main ()
+int main (int argc, char **argv)
 {
     VCPU CPU;
     std::ifstream in ("testout", std::ios_base::binary);
@@ -14,6 +14,6 @@ int main ()
     int ret = CPU.execute ();
     if (ret)
         return ret;
-    std::cout << CPU.pop ();
+    std::cout << CPU.pop () << '\n';
     return 0;
 }

@@ -7,11 +7,6 @@
 #define INTERPRETER_VCPU_H
 
 //---------------------------------------
-//! @brief POISON value for int
-//---------------------------------------
-#define POISON INT32_MAX
-
-//---------------------------------------
 //! @brief Amount of registers in the cpu that can be used by user
 //---------------------------------------
 #define AMOUNT_OF_REGISTERS 16
@@ -19,6 +14,10 @@
 #include <stack>
 #include <vector>
 #include <fstream>
+
+#define ERROR_LOG
+
+#include "../utils/utils.h"
 
 //---------------------------------------
 //! @class VCPU
@@ -98,6 +97,21 @@ public:
 //---------------------------------------
 
     int pop ();
+
+//---------------------------------------
+//! @brief Silent verifier
+//! @return True if object is ok
+//---------------------------------------
+
+    bool ok () const;
+
+//---------------------------------------
+//! @brief Dumper
+//! @param out A stream to write the dump into
+//---------------------------------------
+
+    void dump (utils::ostream out);
+
 };
 
 #endif //INTERPRETER_VCPU_H
