@@ -2,7 +2,8 @@
 ### C++ template
 # Prerequisites
 *.d
-
+gtest/
+cmake-build-debug/
 # Compiled Object files
 *.slo
 *.lo
@@ -32,6 +33,9 @@
 *.exe
 *.out
 *.app
+
+# MakeLists
+CMakeLists.txt
 
 # IntelliJ project files
 .idea
